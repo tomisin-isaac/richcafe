@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overview - Rich Cafe Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </head>
+<body>
+    <div class="admin-dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="images/logo.png" alt="Rich Cafe Logo" class="logo">
+                <h2 class="sidebar-title">Admin Panel</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="admin-overview.html" class="nav-item"><i class="fas fa-tachometer-alt icon"></i> Overview</a></li>
+                    <li><a href="admin-menu.html" class="nav-item"><i class="fas fa-book icon"></i> Menu</a></li>
+                    <li><a href="admin-orders.html" class="nav-item"><i class="fas fa-utensils icon"></i> Orders</a></li>
+                    <li><a href="admin-customers.html" class="nav-item"><i class="fas fa-users icon"></i> Customers</a></li>
+                    <li><a href="admin-analysis.html" class="nav-item active"><i class="fas fa-chart-line icon"></i> Analysis</a></li>
+                    <li><a href="admin-settings.html" class="nav-item"><i class="fas fa-cog icon"></i> Settings</a></li>
+                    <li><a href="admin-login.html" class="nav-item logout-link" id="adminLogout"><i class="fas fa-sign-out-alt icon"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1 class="page-title">Operation Analysis</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <i class="fas fa-bell header-icon"></i>
+                    <i class="fas fa-moon header-icon dark-mode-toggle"></i>
+                    <img src="images/avatar.png" alt="Admin Avatar" class="admin-avatar">
+                </div>
+            </header>
+
+            <section class="dashboard-section dashboard-overview-content">
+                <div class="overview-grid">
+                    <div class="sales-figures-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Sales Figures</h3>
+                            <div class="dropdown">
+                                <select class="timeframe-select">
+                                    <option value="daily">Daily</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="sales-chart-placeholder">
+                            <canvas id="salesBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="orders-received-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Number Of Received Orders</h3>
+                            <div class="dropdown">
+                                <select id="orderTimeframeSelect">
+                                    <option value="today">Today</option>
+                                    <option value="week">This Week</option>
+                                    <option value="month">This Month</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="order-status-content">
+                            <div class="donut-chart-container">
+                                <div class="donut-chart-outer">
+                                    <canvas id="ordersDonutChart"></canvas>
+                                    <div class="donut-chart-inner">
+                                        <p class="chart-label" id="donutTimeframeLabel">Today</p>
+                                        <p class="chart-value" id="donutOrderCount">7</p>
+                                        <p class="chart-sub-label" id="donutSubLabel">Orders</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-breakdown">
+                                <div class="breakdown-item">
+                                    <span class="color-dot rice-orders"></span> Rice (<span id="riceOrders">100</span> Orders)
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="color-dot burger-orders"></span> Burger (<span id="burgerOrders">70</span> Orders)
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="color-dot milkshake-orders"></span> Milkshake (<span id="milkshakeOrders">50</span> Orders)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,2577 @@
+/* --- Global Reset & REM Base --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%; /* 1rem = 10px; easier conversion from px */
+}
+
+/* --- Color Palette (Light Mode) - PREFERRED FROM UPDATED CSS --- */
+:root {
+    --primary-color: #28a745; /* A vibrant green */
+    --green-accent: #28a745; /* Main green for charts and accents */
+    --background-light: #f0f2f5; /* Light background */
+    --text-light: #333333; /* Dark text for light mode */
+    --card-background-light: #ffffff; /* White card background */
+    --border-color: #e0e0e0; /* Light border */
+    --sidebar-bg-light: #ffffff;
+    --sidebar-text-light: #555555;
+    --sidebar-active-bg-light: var(--primary-color);
+    --sidebar-active-text: #ffffff;
+    --header-bg-light: #ffffff;
+    --input-bg-light: #f5f5f5;
+    --input-text-light: #333333;
+    --search-icon-light: #888888;
+
+    /* Chart specific colors (from updated CSS) */
+    --chart-bar-light: #e0e0e0; /* Light grey for the "remaining" part of bar chart */
+    --donut-segment-light-pink: #f8d4e0; /* Light pink for Burger segment */
+    --donut-segment-dark-blue: #0a1a2e; /* Dark blue/navy for Milkshake segment */
+
+    /* Status colors (from updated CSS) */
+    --status-pending-bg: #fff3cd; /* Light yellow */
+    --status-pending-text: #856404; /* Dark yellow */
+    --status-completed-bg: #d4edda; /* Light green */
+    --status-completed-text: #155724; /* Dark green */
+
+    /* Specific colors for the income cards (from original CSS, but align with updated palette) */
+    --blue-accent: #007bff;
+    --orange-accent: #ffc107;
+    --purple-accent: #6f42c1;
+
+    /* Original donut colors (these will be overridden by segment specific ones) */
+    --donut-color-1: #1E88E5;
+    --donut-color-2: #FFCA28;
+    --donut-color-text: #333;
+}
+
+/* --- Dark Mode Color Palette - PREFERRED FROM UPDATED CSS --- */
+body.dark-mode {
+    --primary-color: #ff6b6b; /* Slightly softer red for dark mode - Keeping original primary if green isn't desired */
+    --secondary-color: #1a1a1a; /* Very dark grey for sidebar background (original was --secondary-color for sidebar) */
+
+    --background-light: #2c2c2c; /* Dark grey for subtle backgrounds (original had this) */
+    --background-dark: #1e1e1e; /* Very dark grey for main containers (original had this) */
+
+    --text-dark: #e0e0e0; /* Light text for main body text in dark mode (original had this) */
+    --text-light: #b0b0b0; /* Slightly darker light text for secondary text (original had this) */
+
+    --border-color: #444; /* Darker borders (original had this) */
+    --shadow-light: rgba(255, 255, 255, 0.05); /* (original had this) */
+    --shadow-medium: rgba(0, 0, 0, 0.3); /* Darker shadows for contrast (original had this) */
+
+    --green-accent: #4CAF50; /* Adjust green for dark mode if needed (original had this) */
+    --chart-bar-light: #444; /* Darker grey for inactive chart bars (original had this) */
+
+    /* Chart specific colors (from updated CSS - overriding original) */
+    --donut-segment-light-pink: #ffafc0; /* Adjusted for dark mode visibility */
+    --donut-segment-dark-blue: #3b5a76; /* Adjusted for dark mode visibility */
+
+    /* Specific colors for the new income cards in dark mode (original had these) */
+    --blue-accent: #66b2ff; /* Lighter blue for dark mode */
+    --orange-accent: #ffeb3b; /* Lighter orange for dark mode */
+    --purple-accent: #bb86fc; /* Lighter purple for dark mode */
+
+    /* Donut Chart Specific Colors for Dark Mode (original had these, these will be overridden by segment specific ones) */
+    --donut-color-1: #64B5F6;
+    --donut-color-2: #FFEE58;
+    --donut-color-text: #e0e0e0;
+
+    /* Specific overrides from updated CSS */
+    --card-background-dark: #2c2c4d; /* Darker card background for dark mode */
+    --border-color-dark: #444466; /* Dark border for dark mode */
+    --sidebar-bg-dark: #2c2c4d;
+    --sidebar-text-dark: #b0b0d0;
+    --sidebar-active-bg-dark: #208a3d;
+    --sidebar-active-text: #ffffff;
+    --header-bg-dark: #2c2c4d;
+    --input-bg-dark: #3a3a5a;
+    --input-text-dark: #f0f0f0;
+    --search-icon-dark: #b0b0d0;
+}
+
+/* Specific text color overrides for dark mode elements that should be light (from original CSS) */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode .page-title, /* Main page title in header */
+body.dark-mode .section-title, /* Titles of dashboard sections */
+body.dark-mode .dashboard-stat-card .stat-value, /* Adjusted to new class name */
+body.dark-mode .sales-figures-card .card-title, /* Card titles */
+body.dark-mode .orders-received-card .card-title, /* Card titles */
+body.dark-mode table th, /* Table headers */
+body.dark-mode .menu-item-card .item-name, /* Menu item names */
+body.dark-mode .stat-card .card-title, /* Original stat card titles (if still used) */
+body.dark-mode .admin-name, /* Admin name in header */
+body.dark-mode .header-icon { /* Icons in header, like search, bell, moon/sun */
+    color: var(--text-dark); /* Ensure these elements are light in dark mode */
+}
+
+/* Also ensure input/select elements have proper text color (from original CSS) */
+body.dark-mode .input-group input[type="text"],
+body.dark-mode .input-group input[type="email"],
+body.dark-mode .input-group input[type="tel"],
+body.dark-mode .input-group input[type="password"],
+body.dark-mode select, /* Corrected typo: body.dark-group select -> body.dark-mode select */
+body.dark-mode .verify-code-container .code-digit {
+    color: var(--text-dark);
+}
+
+/* Search box input placeholder color adjustment (from original CSS) */
+body.dark-mode .search-box input::placeholder {
+    color: var(--text-light); /* Make placeholder text visible */
+}
+
+/* Dark mode adjustments for elements from UPDATED CSS */
+body.dark-mode .dashboard-stat-card,
+body.dark-mode .sales-figures-card,
+body.dark-mode .orders-received-card,
+body.dark-mode .order-list-section {
+    background-color: var(--card-background-dark);
+    color: var(--text-dark); /* This might be redundant with the h1/h2 rules above but safe to keep */
+    border: 1px solid var(--border-color-dark);
+}
+
+body.dark-mode .timeframe-select,
+body.dark-mode #orderTimeframeSelect {
+    background-color: var(--input-bg-dark);
+    color: var(--input-text-dark);
+    border-color: var(--border-color-dark);
+}
+
+body.dark-mode table {
+    color: var(--text-dark); /* Default table text color */
+}
+
+body.dark-mode thead th {
+    background-color: var(--input-bg-dark);
+    border-color: var(--border-color-dark);
+}
+
+body.dark-mode tbody td {
+    border-bottom-color: var(--border-color-dark);
+}
+
+body.dark-mode .mobile-bottom-nav {
+    background-color: var(--header-bg-dark);
+    border-top: 1px solid var(--border-color-dark);
+}
+
+body.dark-mode .mobile-bottom-nav .mobile-nav-item {
+    color: var(--sidebar-text-dark);
+}
+
+body.dark-mode .mobile-bottom-nav .mobile-nav-item.active {
+    color: var(--sidebar-active-text);
+}
+
+body.dark-mode .sidebar-nav .nav-item:hover {
+    background-color: rgba(40, 167, 69, 0.2); /* Slightly darker green on hover in dark mode */
+}
+
+
+/* General Body and Font - MERGED */
+body {
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.6; /* From original CSS */
+    color: var(--text-light); /* From updated CSS */
+    background-color: var(--background-light); /* From updated CSS */
+    display: flex; /* From original CSS (for centering initial forms) */
+    justify-content: center; /* From original CSS */
+    align-items: center; /* From original CSS */
+    min-height: 100vh; /* From original CSS */
+    padding: 2rem; /* From original CSS */
+    margin: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden; /* From updated CSS */
+}
+
+/* Container for Forms/Pages (Original CSS) */
+.container {
+    background-color: var(--card-background-light); /* Using card-background-light from updated palette */
+    padding: 4rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 1rem 3rem var(--shadow-medium);
+    width: 100%;
+    max-width: 45rem;
+    text-align: center;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logo {
+    max-width: 12rem;
+    margin-bottom: 2.5rem;
+    /* Adjust logo for dark mode if it's a monochrome image (from original CSS) */
+    /* body.dark-mode .logo { filter: brightness(0) invert(1); } */
+}
+/* From Updated CSS */
+.sidebar-header .logo {
+    width: 80px; /* Adjust size as needed */
+    height: auto;
+    margin-bottom: 10px;
+    /* This filter might need to be adjusted if the logo isn't monochrome and needs to invert colors for dark mode */
+    /* filter: brightness(0) invert(1); */
+}
+
+
+h1 {
+    color: var(--text-light); /* From updated CSS (using text-light for headings in light mode) */
+    margin-bottom: 1.5rem;
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+h2 {
+    color: var(--text-light); /* From updated CSS */
+    margin-bottom: 2.5rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+p {
+    margin-bottom: 1.5rem;
+    color: var(--text-light); /* From updated CSS */
+    font-size: 1.6rem;
+}
+
+.tagline {
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--text-light); /* From updated CSS */
+    margin-bottom: 3rem;
+}
+
+/* Form Card Style (Original CSS) */
+.form-card {
+    background-color: var(--background-light); /* Using general light background */
+    padding: 3rem;
+    border-radius: 1.2rem;
+    box-shadow: inset 0 0.2rem 0.8rem var(--shadow-light);
+    margin-top: 3rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group {
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+    color: var(--text-light); /* From updated CSS */
+    font-size: 1.5rem;
+}
+
+.input-group input[type="text"],
+.input-group input[type="email"],
+.input-group input[type="tel"],
+.input-group input[type="password"],
+.input-group select {
+    width: 100%;
+    padding: 1.4rem 1.8rem;
+    border: 0.1rem solid var(--border-color);
+    border-radius: 0.8rem;
+    font-size: 1.6rem;
+    color: var(--input-text-light); /* From updated CSS */
+    background-color: var(--input-bg-light); /* From updated CSS */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 0.4rem rgba(40, 167, 69, 0.2); /* Using primary color */
+}
+
+.phone-input-group .phone-input-fields {
+    display: flex;
+    gap: 1rem;
+}
+
+.phone-input-group select {
+    flex: 0 0 auto;
+    width: auto;
+    appearance: none;
+    background: var(--input-bg-light) url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23444%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-6.5H18.9c-4.9%200-9.2%201.8-12.7%205.4s-5.5%208.2-5.5%2013.2c0%204.9%201.8%209.2%205.4%2012.7l128%20127.9c3.5%203.5%207.8%205.4%2012.8%205.4s9.2-1.8%2012.7-5.4l128-127.9c3.6-3.6%205.4-7.9%205.4-12.8-.1-4.9-1.9-9.2-5.5-12.7z%22%2F%3E%3C%2Fsvg%3E') no-repeat right 1.2rem center;
+    background-size: 1rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.phone-input-group input {
+    flex-grow: 1;
+}
+
+/* Buttons (Original CSS) */
+.button {
+    display: inline-block;
+    padding: 1.4rem 3rem;
+    border: none;
+    border-radius: 0.8rem;
+    cursor: pointer;
+    font-size: 1.8rem;
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.primary-button {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 0.4rem 1.5rem rgba(40, 167, 69, 0.3); /* Using primary color */
+}
+
+.primary-button:hover {
+    background-color: #218838; /* Darker green */
+    transform: translateY(-0.2rem);
+    box-shadow: 0 0.6rem 2rem rgba(40, 167, 69, 0.4);
+}
+
+.secondary-button {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 0.2rem solid var(--primary-color);
+}
+
+.secondary-button:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-0.2rem);
+}
+
+.logout-button {
+    background-color: #dc3545;
+    color: white;
+}
+.logout-button:hover {
+    background-color: #c82333;
+    transform: translateY(-0.2rem);
+}
+
+.status-message {
+    margin-top: 2.5rem;
+    font-weight: 700;
+    font-size: 1.6rem;
+}
+
+/* Using status colors from updated CSS */
+.status-message[style*="color: green"] { /* Keep for existing HTML that might use inline style */
+    color: var(--status-completed-text);
+}
+.status-message[style*="color: red"] { /* Keep for existing HTML that might use inline style */
+    color: #dc3545; /* Red remains a specific alert color */
+}
+
+
+.admin-login-link,
+.back-to-home-link,
+.resend-text {
+    margin-top: 2.5rem;
+    font-size: 1.5rem;
+}
+
+.action-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.action-link:hover {
+    text-decoration: underline;
+}
+
+.highlight-text {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* Specific styles for verify-code.html (Original CSS) */
+.verify-code-container .otp-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.verify-code-container .otp-inputs {
+    display: flex;
+    gap: 1.2rem;
+    margin-bottom: 3rem;
+    justify-content: center;
+    width: 100%;
+    max-width: 38rem;
+}
+
+.verify-code-container .code-digit {
+    width: 5.5rem;
+    height: 5.5rem;
+    font-size: 3rem;
+    text-align: center;
+    border: 0.2rem solid var(--border-color);
+    border-radius: 1rem;
+    background-color: var(--input-bg-light); /* From updated CSS */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    color: var(--input-text-light); /* From updated CSS */
+    font-weight: 700;
+}
+
+.verify-code-container .code-digit:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 0.5rem rgba(40, 167, 69, 0.2); /* Using primary color */
+}
+
+/* Specific styles for homepage.html (Original CSS) */
+.homepage-container {
+    max-width: 60rem;
+}
+
+.homepage-header .logo {
+    margin-bottom: 2rem;
+}
+
+.homepage-actions {
+    margin-top: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Admin Dashboard Layout (MERGED) */
+.admin-dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%; /* From original CSS */
+    background-color: var(--background-light); /* From updated CSS */
+    overflow-x: hidden; /* From updated CSS */
+    transition: background-color 0.3s ease;
+}
+
+/* Sidebar (MERGED) */
+.sidebar {
+    width: 25rem; /* Using 250px from updated, converted to rem */
+    background-color: var(--sidebar-bg-light); /* From updated CSS */
+    color: var(--sidebar-text-light); /* From updated CSS */
+    padding: 3rem 2rem; /* Adjusted padding from original */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0.2rem 0 1.5rem rgba(0,0,0,0.05); /* From original CSS */
+    transition: transform 0.3s ease-in-out, background-color 0.3s ease, color 0.3s ease;
+    position: fixed; /* From original CSS */
+    height: 100%; /* From original CSS */
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    flex-shrink: 0; /* From updated CSS */
+}
+
+.sidebar.hidden {
+    transform: translateX(-100%); /* Using 100% for consistency */
+    position: absolute; /* From updated CSS */
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 4rem; /* From original CSS */
+}
+
+.sidebar-title {
+    color: var(--text-light); /* Aligning with dashboard text colors */
+    font-size: 2rem; /* From original CSS */
+    margin-bottom: 0;
+    font-weight: 700;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0; /* From updated CSS */
+}
+
+.sidebar-nav li {
+    margin-bottom: 1.2rem; /* From original CSS */
+}
+
+.sidebar-nav .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem 2rem; /* From original CSS */
+    color: var(--sidebar-text-light); /* From updated CSS */
+    text-decoration: none;
+    border-radius: 0.8rem; /* From original CSS */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
+    font-size: 1.6rem; /* From original CSS */
+}
+
+.sidebar-nav .nav-item .icon {
+    margin-right: 1.5rem; /* From original CSS */
+    font-size: 2rem; /* From original CSS */
+}
+
+.sidebar-nav .nav-item:hover {
+    background-color: rgba(40, 167, 69, 0.1); /* Lighter green on hover - from updated CSS */
+    color: var(--primary-color); /* From updated CSS */
+}
+
+.sidebar-nav .nav-item.active {
+    background-color: var(--sidebar-active-bg-light); /* From updated CSS */
+    color: var(--sidebar-active-text); /* From updated CSS */
+    box-shadow: 0 0.4rem 1.5rem rgba(40, 167, 69, 0.3); /* Using primary color */
+}
+
+.sidebar-nav .nav-item.active:hover {
+    background-color: #218838; /* Darker green */
+}
+
+.logout-link {
+    margin-top: 3rem; /* From original CSS */
+}
+
+/* Main Content Area (MERGED) */
+.main-content {
+    flex-grow: 1;
+    margin-left: 28rem; /* From original CSS */
+    padding: 3rem; /* From original CSS */
+    overflow: auto;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+/* Adjust main content when sidebar is hidden on larger screens (from original, refined by updated) */
+@media (min-width: 76.9rem) { /* Converted from 769px */
+    .main-content.sidebar-hidden {
+        margin-left: 0; /* No margin when sidebar is hidden */
+}
+}
+
+
+/* Dashboard Header Styles (MERGED) */
+.dashboard-header {
+    background-color: var(--header-bg-light); /* From updated CSS */
+    padding: 2rem 3rem; /* Adjusted from original to be 20px 30px */
+    border-radius: 1.2rem; /* From original CSS */
+    box-shadow: 0 0.5rem 2rem rgba(0,0,0,0.05); /* From updated CSS */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem; /* From original CSS */
+    position: relative;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    flex-wrap: wrap; /* From updated CSS */
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* From updated CSS */
+    flex-shrink: 0; /* From original CSS */
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 2.8rem; /* From original CSS */
+    cursor: pointer;
+    color: var(--text-light); /* From updated CSS */
+    margin-right: 2rem; /* From original CSS */
+    display: none; /* Hidden by default, shown on mobile - from updated CSS */
+}
+
+.page-title {
+    margin: 0;
+    font-size: 2.8rem; /* From original CSS */
+    color: var(--text-light); /* From updated CSS */
+    font-weight: 700;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem; /* From original CSS */
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+.search-box {
+    position: relative;
+    flex-grow: 1;
+    max-width: 30rem; /* From original CSS */
+    margin-right: 1.5rem; /* From original CSS */
+}
+
+.search-box input {
+    border: 0.1rem solid var(--border-color);
+    border-radius: 2rem;
+    padding: 0.8rem 1.5rem 0.8rem 4rem; /* From original CSS */
+    font-size: 1.5rem;
+    width: 100%;
+    background-color: var(--input-bg-light); /* From updated CSS */
+    color: var(--input-text-light); /* From updated CSS */
+    transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.search-box input::placeholder {
+    color: var(--search-icon-light); /* From updated CSS */
+}
+
+.search-box .fa-search {
+    position: absolute;
+    left: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--search-icon-light); /* From updated CSS */
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+.header-icon {
+    font-size: 2rem; /* From original CSS */
+    color: var(--text-light); /* From updated CSS */
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.header-icon:hover {
+    color: var(--primary-color);
+}
+
+.admin-name {
+    font-weight: 700; /* From original CSS */
+    color: var(--text-light); /* From updated CSS */
+    font-size: 1.6rem; /* From original CSS */
+}
+
+.admin-avatar {
+    width: 4rem; /* From original CSS */
+    height: 4rem; /* From original CSS */
+    border-radius: 50%;
+    object-fit: cover;
+    border: 0.3rem solid var(--primary-color);
+}
+
+.dashboard-section {
+    background-color: var(--card-background-light); /* From updated CSS */
+    padding: 3rem; /* From original CSS */
+    border-radius: 1.2rem; /* From original CSS */
+    box-shadow: 0 0.5rem 2rem rgba(0,0,0,0.05); /* From updated CSS */
+    margin-bottom: 3rem; /* From original CSS */
+    border: 0.1rem solid var(--border-color); /* From original CSS */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.section-title {
+    margin-bottom: 2.5rem;
+    color: var(--text-light); /* From updated CSS */
+    font-size: 2.4rem; /* From original CSS */
+    font-weight: 700;
+    display: flex; /* Added for alignment of filter buttons */
+    justify-content: space-between; /* Added for alignment of filter buttons */
+    align-items: center; /* Added for alignment of filter buttons */
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+.dashboard-section.hidden {
+    display: none; /* From original CSS */
+}
+
+/* NEW: Top Stat Cards Grid (From Updated CSS) */
+.top-stat-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adjusted minmax for 4 cards */
+    gap: 20px; /* Spacing below this grid */
+    margin-bottom: 30px; /* Spacing below this grid */
+}
+
+/* NEW: Dashboard Stat Card (From Updated CSS) */
+.dashboard-stat-card {
+    background-color: var(--card-background-light);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid var(--border-color); /* Added border */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease; /* Added transition */
+}
+
+.dashboard-stat-card:hover { /* From original, but for new class */
+    transform: translateY(-0.5rem);
+    box-shadow: 0 0.8rem 2rem var(--shadow-medium);
+}
+
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    color: #ffffff; /* White icon color */
+}
+
+/* Specific icon background colors (from updated CSS) */
+.stat-icon.sales-icon { background-color: #28a745; } /* Green */
+.stat-icon.orders-icon { background-color: #007bff; } /* Blue */
+.stat-icon.products-icon { background-color: #ffc107; } /* Orange */
+.stat-icon.customers-icon { background-color: #6f42c1; } /* Purple */
+
+.stat-details {
+    flex-grow: 1;
+    text-align: left; /* From original */
+}
+
+.stat-label {
+    font-size: 0.9em; /* From updated CSS */
+    color: var(--text-light);
+    margin: 0;
+    opacity: 0.7; /* From updated CSS */
+}
+
+.stat-value {
+    font-size: 1.5em; /* From updated CSS */
+    font-weight: 700;
+    color: var(--text-light); /* From updated CSS */
+    margin: 5px 0 0; /* From updated CSS */
+}
+
+/* **MODIFIED CSS: Hide stat-chart completely on all views for dashboard-stat-card** (Original CSS) */
+.stat-chart {
+    display: none; /* Hide the chart placeholder */
+}
+
+/* Chart styles (these are the mini charts) - Keeping definitions but display:none above overrides them for .stat-chart */
+/* Line chart positive (green, similar to original income card but smaller) */
+.mini-chart-line-positive {
+    /* Using linear gradients to approximate a rising line graph */
+    background: linear-gradient(to top right, var(--green-accent) 0%, transparent 60%),
+    linear-gradient(to top left, var(--green-accent) 0%, transparent 60%),
+    var(--background-light);
+    background-size: 50% 100%, 50% 100%, 100% 100%;
+    background-repeat: no-repeat;
+    background-position: left bottom, right bottom, center center;
+    opacity: 0.9;
+}
+/* Specific style for blue line chart */
+.mini-chart-line-positive.orders-chart {
+    background: linear-gradient(to top right, var(--blue-accent) 0%, transparent 60%),
+                linear-gradient(to top left, var(--blue-accent) 0%, transparent 60%),
+                var(--background-light);
+}
+
+
+/* Bar chart (negative trend - orange) */
+.mini-chart-bar-negative {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end; /* Bars start from bottom */
+    padding: 0.3rem 0.5rem;
+}
+.mini-chart-bar-negative .bar-segment {
+    width: 0.8rem; /* Width of each bar */
+    border-radius: 0.2rem 0.2rem 0 0;
+    background-color: var(--orange-accent); /* Orange color */
+    display: block;
+    transition: height 0.3s ease;
+}
+.mini-chart-bar-negative .bar-1 { height: 80%; opacity: 0.8;}
+.mini-chart-bar-negative .bar-2 { height: 55%; }
+.mini-chart-bar-negative .bar-3 { height: 70%; opacity: 0.7;}
+.mini-chart-bar-negative .bar-4 { height: 40%; }
+
+
+/* Bar chart (positive trend - purple) */
+.mini-chart-bar-positive {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding: 0.3rem 0.5rem;
+}
+.mini-chart-bar-positive .bar-segment {
+    width: 0.8rem;
+    border-radius: 0.2rem 0.2rem 0 0;
+    background-color: var(--purple-accent); /* Purple color */
+    display: block;
+    transition: height 0.3s ease;
+}
+.mini-chart-bar-positive .bar-1 { height: 30%; opacity: 0.7; }
+.mini-chart-bar-positive .bar-2 { height: 65%; }
+.mini-chart-bar-positive .bar-3 { height: 45%; opacity: 0.8; }
+.mini-chart-bar-4 { height: 75%; }
+
+
+/* Cards Grid for Overview (Existing, now holds Sales & Orders) (Original CSS, but overridden by updated where relevant) */
+.cards-grid { /* This class is currently not explicitly used in admin-overview for the lower sections */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+    gap: 2.5rem;
+    margin-top: 2rem;
+}
+
+.stat-card { /* Original stat card, likely not used in overview anymore */
+    background-color: var(--background-light);
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 0.2rem 1rem var(--shadow-light);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-0.5rem);
+    box-shadow: 0 0.8rem 2rem var(--shadow-medium);
+}
+
+.stat-card .card-title {
+    color: var(--text-light); /* Adjusted for consistency */
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+    font-weight: 600;
+}
+
+.stat-card .stat-value {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0;
+}
+
+/* Overview Specific Card Styles (MERGED - prioritizing updated CSS) */
+.overview-grid { /* Now explicitly displays as two columns on larger screens */
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* This is the key change for side-by-side */
+    gap: 20px; /* Space between the cards */
+    margin-bottom: 30px;
+}
+
+.income-card { /* REMOVED - The class `dashboard-stat-card` replaces this */
+    display: none; /* Hide if old HTML structure is still there */
+}
+
+/* Sales Figures Card (MERGED - prioritizing updated CSS) */
+.sales-figures-card {
+    background-color: var(--card-background-light);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color); /* Added border */
+    display: flex; /* Use flex to arrange header and chart/content */
+    flex-direction: column;
+    min-height: 30rem; /* From original CSS */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.sales-figures-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px; /* Converted from original 2rem */
+}
+.sales-figures-card .card-title {
+    margin: 0;
+    font-size: 1.3em; /* From updated CSS */
+    color: var(--text-light); /* From updated CSS */
+}
+
+.sales-chart-placeholder { /* From updated CSS */
+    position: relative;
+    height: 280px; /* Fixed height for the chart area */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1; /* Allow chart area to grow */
+    background-color: var(--input-bg-light); /* Using a lighter background for placeholder from updated css */
+    border-radius: 0.8rem; /* From original CSS */
+    font-style: italic; /* From original CSS */
+    color: var(--text-light); /* From original CSS */
+    transition: background-color 0.3s ease, color 0.3s ease; /* From original CSS */
+}
+
+#salesBarChart { /* From updated CSS */
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Orders Received Card (MERGED - prioritizing updated CSS) */
+.orders-received-card {
+    background-color: var(--card-background-light);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color); /* Added border */
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.orders-received-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px; /* Converted from original 2rem */
+}
+
+.orders-received-card .card-title {
+    margin: 0;
+    font-size: 1.3em; /* From updated CSS */
+    color: var(--text-light); /* From updated CSS */
+}
+
+.order-status-content { /* From updated CSS */
+    display: flex;
+    /* On larger screens, the donut and breakdown should be side-by-side */
+    flex-direction: row; /* Changed to row for side-by-side */
+    align-items: center; /* Center items when stacked */
+    justify-content: space-around; /* Distribute space */
+    gap: 20px;
+    flex-wrap: wrap; /* From original CSS */
+    flex-grow: 1; /* Allow this content to grow */
+}
+
+/* Donut Chart Container & Positioning (MERGED - prioritizing updated CSS sizes) */
+.donut-chart-container {
+    position: relative;
+    width: 200px; /* Fixed width for the donut chart (from updated CSS) */
+    height: 200px; /* Fixed height for the donut chart (from updated CSS) */
+    margin: 0 auto; /* Center the donut chart horizontally (from updated CSS) */
+    display: flex; /* For centering content within */
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0; /* From original CSS */
+}
+
+.donut-chart-outer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex; /* From original CSS */
+    justify-content: center; /* From original CSS */
+    align-items: center; /* From original CSS */
+}
+
+#ordersDonutChart { /* From updated CSS (with original important flags) */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important; /* Override Chart.js inline styles */
+    height: 100% !important; /* Override Chart.js inline styles */
+    max-width: 100% !important; /* From original CSS */
+    max-height: 100% !important; /* From original CSS */
+}
+
+.donut-chart-inner { /* From updated CSS */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--text-light); /* From updated CSS */
+    z-index: 1; /* Ensure text appears above the canvas (from original) */
+}
+
+.donut-chart-inner .chart-label { /* From updated CSS */
+    font-size: 0.9em;
+    color: var(--text-light);
+    margin: 0;
+    opacity: 0.8;
+}
+
+.donut-chart-inner .chart-value { /* From updated CSS */
+    font-size: 2.5em;
+    font-weight: bold;
+    color: var(--text-light);
+    margin: 5px 0;
+}
+
+.donut-chart-inner .chart-sub-label { /* From updated CSS */
+    font-size: 0.9em;
+    color: var(--text-light);
+    margin: 0;
+    opacity: 0.7;
+}
+
+/* Order Breakdown List (MERGED) */
+.order-breakdown { /* From updated CSS */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align dots to the left */
+    width: 100%; /* Take full width of parent column */
+    padding-left: 20px; /* Indent slightly */
+    text-align: left; /* From original CSS */
+    margin-left: 2rem; /* From original CSS - might be adjusted by responsive rules */
+}
+
+.breakdown-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px; /* From updated CSS */
+    font-size: 0.95em; /* From updated CSS */
+    color: var(--text-light); /* From updated CSS */
+}
+
+.color-dot {
+    display: inline-block;
+    width: 1.2rem; /* From original CSS */
+    height: 1.2rem; /* From original CSS */
+    border-radius: 50%;
+    margin-right: 0.8rem; /* From original CSS */
+    flex-shrink: 0;
+}
+
+/* Specific colors for breakdown dots, matching donut segments (from updated CSS variable names) */
+.color-dot.rice-orders {
+    background-color: var(--green-accent);
+}
+.color-dot.burger-orders {
+    background-color: var(--donut-segment-light-pink);
+}
+.color-dot.milkshake-orders {
+    background-color: var(--donut-segment-dark-blue);
+}
+
+.dropdown select { /* From updated CSS */
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--input-bg-light);
+    color: var(--input-text-light);
+    font-size: 0.9em;
+    cursor: pointer;
+    -webkit-appearance: none; /* Remove default arrow */
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2C197.915c-3.7-3.7-9.8-3.7-13.5%2C0L146.2%2C38.615L18.9%2C197.915c-3.7%2C3.7-9.8%2C3.7-13.5%2C0c-3.7-3.7-3.7-9.8%2C0-13.5L139.4%2C18.115c3.7-3.7%2C9.8-3.7%2C13.5%2C0L287%2C184.415C290.7%2C188.115%2C290.7%2C194.215%2C287%2C197.915z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 12px auto;
+    padding-right: 30px; /* Make space for the custom arrow */
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* From original CSS */
+}
+
+
+/* Order List Section (MERGED - prioritizing updated CSS structure for cards) */
+.order-list-section { /* From updated CSS */
+    background-color: var(--card-background-light);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color); /* Added border */
+}
+
+/* Table Styles (MERGED) */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--card-background-light); /* From updated CSS */
+    border-radius: 1rem; /* From original CSS */
+    overflow: hidden; /* From original CSS */
+    box-shadow: 0 0.2rem 1rem var(--shadow-light); /* From original CSS */
+    min-width: 700px; /* From updated CSS */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+table th, table td {
+    padding: 1.5rem 2rem; /* From original CSS */
+    text-align: left;
+    border-bottom: 0.1rem solid var(--border-color); /* From original CSS */
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+/* Specific overrides from updated CSS */
+thead th {
+    background-color: var(--input-bg-light);
+    padding: 12px 15px; /* From updated CSS */
+    text-align: left;
+    font-size: 0.9em; /* From updated CSS */
+    color: var(--text-light); /* From updated CSS */
+    border-bottom: 1px solid var(--border-color);
+}
+
+tbody td {
+    padding: 10px 15px; /* From updated CSS */
+    font-size: 0.85em; /* From updated CSS */
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-light); /* From updated CSS */
+}
+
+tbody tr:last-child td { /* From updated CSS */
+    border-bottom: none;
+}
+
+
+table tbody tr:nth-child(even) { /* From original CSS */
+    background-color: #fcfcfc;
+}
+body.dark-mode table tbody tr:nth-child(even) { /* From original CSS */
+    background-color: #252525; /* Darker stripe for dark mode */
+}
+
+table tbody tr:hover { /* From original CSS */
+    background-color: #f5f5f5;
+}
+body.dark-mode table tbody tr:hover { /* From original CSS */
+    background-color: #3a3a3a; /* Darker hover for dark mode */
+}
+
+/* Status styles from Updated CSS */
+table button.status-pending, /* Target buttons inside table specifically */
+table button.status-completed {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 600;
+    text-align: center;
+    display: inline-block;
+    border: none; /* No border for these status buttons */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+table button.status-pending {
+    background-color: var(--status-pending-bg);
+    color: var(--status-pending-text);
+}
+table button.status-pending:hover {
+    filter: brightness(0.9); /* Slightly darker on hover */
+}
+
+table button.status-completed {
+    background-color: var(--status-completed-bg);
+    color: var(--status-completed-text);
+    /* No hover effect for completed, as they are not clickable for action */
+    cursor: default; /* Change cursor for completed status */
+}
+
+/* Filter buttons for the order list (NEW) */
+.order-status-filters {
+    display: flex;
+    gap: 10px; /* Space between the filter buttons */
+    margin-bottom: 20px; /* Space below the filter buttons */
+    margin-top: -20px; /* Pull them up a bit, next to the title */
+    justify-content: flex-end; /* Align to the right, next to "Order List" */
+    align-items: center; /* Vertically align with the title if needed */
+}
+
+.order-status-filters .small-button {
+    cursor: pointer;
+    border: 1px solid var(--border-color); /* Light border */
+    background-color: var(--input-bg-light); /* Subtle background */
+    color: var(--text-light); /* Default text color */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    padding: 8px 15px; /* Adjust padding for better look */
+    font-size: 1.4rem; /* Match other small buttons */
+    border-radius: 8px; /* Slightly more rounded */
+}
+
+.order-status-filters .small-button:hover {
+    background-color: var(--border-color); /* Lighter background on hover */
+}
+
+.order-status-filters .small-button.active-filter {
+    background-color: var(--primary-color); /* Active state matches primary button */
+    color: white;
+    border-color: var(--primary-color);
+}
+
+
+/* General small buttons (already existed, just ensuring consistency) */
+.small-button { /* From original CSS */
+    padding: 0.8rem 1.5rem;
+    font-size: 1.4rem;
+    border-radius: 0.6rem;
+    margin-right: 0.8rem;
+    border: 0.1rem solid transparent;
+    cursor: pointer; /* Ensure cursor is pointer for all small buttons */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.view-button { /* From original CSS */
+    background-color: #007bff;
+    color: white;
+}
+.view-button:hover { background-color: #0056b3; }
+
+.complete-button { /* From original CSS */
+    background-color: #28a745;
+    color: white;
+}
+.complete-button:hover { background-color: #218838; }
+
+.edit-button { /* From original CSS */
+    background-color: #ffc107;
+    color: var(--text-light); /* Changed to text-light for better contrast */
+}
+.edit-button:hover { background-color: #e0a800; }
+
+.delete-button { /* From original CSS */
+    background-color: #dc3545;
+    color: white;
+}
+.delete-button:hover { background-color: #c82333; }
+
+
+/* Menu Management Grid (Original CSS) */
+.menu-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr));
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+}
+
+.menu-item-card {
+    background-color: var(--card-background-light); /* Using card background */
+    border-radius: 1.2rem;
+    overflow: hidden;
+    box-shadow: 0 0.5rem 1.5rem var(--shadow-light);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+}
+
+.menu-item-card:hover {
+    transform: translateY(-0.5rem);
+    box-shadow: 0 0.8rem 2rem var(--shadow-medium);
+}
+
+.menu-item-image {
+    width: 100%;
+    height: 20rem;
+    object-fit: cover;
+    display: block;
+}
+
+.menu-item-details {
+    padding: 2rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-item-card .item-name {
+    padding-bottom: 0.5rem;
+    margin: 0;
+    color: var(--text-light); /* Adjusted for consistency */
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.menu-item-card .item-price {
+    padding-bottom: 1.5rem;
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.menu-item-card .item-actions {
+    padding-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    border-top: 0.1rem solid var(--border-color);
+    margin-top: auto;
+}
+
+.add-item-button {
+    margin-bottom: 2rem;
+}
+
+
+/* Settings Form (Original CSS) */
+.settings-form {
+    padding: 3rem;
+    background-color: var(--card-background-light); /* Using card background */
+    border-radius: 1.2rem;
+    box-shadow: inset 0 0.2rem 0.8rem var(--shadow-light);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.settings-form .input-group {
+    margin-bottom: 2rem;
+}
+
+
+/* Mobile Bottom Navigation (MERGED - prioritizing updated CSS display rules) */
+.mobile-bottom-nav {
+    display: none; /* Hidden by default - from updated CSS */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--header-bg-light); /* From updated CSS */
+    box-shadow: 0 -0.5rem 2rem var(--shadow-medium); /* From original CSS */
+    z-index: 1001; /* From original CSS */
+    padding: 1rem 0; /* From original CSS */
+    justify-content: space-around;
+    align-items: center;
+    /* color: white; Removed this, individual items handle color */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    border-top: 1px solid var(--border-color); /* From updated CSS */
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--sidebar-text-light); /* From updated CSS */
+    text-decoration: none;
+    font-size: 0.8em; /* From updated CSS */
+    padding: 0.8rem; /* From original CSS */
+    border-radius: 0.5rem; /* From original CSS */
+    transition: background-color 0.3s ease;
+    flex: 1; /* From updated CSS */
+    text-align: center; /* From updated CSS */
+}
+
+.mobile-nav-item i {
+    font-size: 2.6rem; /* From original CSS */
+    margin-bottom: 0.5rem; /* From original CSS */
+}
+
+.mobile-nav-item.active { /* From updated CSS */
+    color: var(--primary-color);
+}
+.mobile-nav-item.active,
+.mobile-nav-item:hover { /* From original CSS */
+    background-color: var(--primary-color);
+    color: white; /* From original CSS */
+}
+
+
+/* Responsive Design - Convert to REM and refine (MERGED and CONSOLIDATED) */
+@media (max-width: 76.7rem) { /* Mobile-specific adjustments */
+    body {
+        padding: 1.5rem;
+        align-items: flex-start;
+}
+
+    .container {
+        padding: 2.5rem;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 1rem;
+}
+
+    .logo {
+        max-width: 10rem;
+}
+
+    h1 {
+        font-size: 2.8rem;
+}
+
+    h2 {
+        font-size: 2.2rem;
+}
+
+    .tagline {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+}
+
+    .form-card {
+        padding: 2rem;
+        border-radius: 1rem;
+}
+
+    .input-group label {
+        font-size: 1.4rem;
+}
+
+    .input-group input,
+    .input-group select {
+        padding: 1.2rem 1.5rem;
+        border-radius: 0.6rem;
+}
+
+    .button {
+        padding: 1.2rem 2.5rem;
+        font-size: 1.6rem;
+        border-radius: 0.6rem;
+}
+
+    .verify-code-container .otp-inputs {
+        gap: 0.8rem;
+        max-width: unset;
+}
+
+    .verify-code-container .code-digit {
+        width: 4.5rem;
+        height: 4.5rem;
+        font-size: 2.8rem;
+        border-radius: 0.8rem;
+}
+
+    .homepage-actions {
+        gap: 1.5rem;
+}
+
+    /* Admin Dashboard Responsive - Prioritizing Updated CSS behavior */
+    .admin-dashboard-layout {
+        flex-direction: column; /* Stack sidebar and main content */
+}
+
+    .sidebar {
+        position: fixed; /* Fix sidebar on small screens */
+        height: 100vh;
+        z-index: 1000;
+        transform: translateX(-100%); /* Hidden by default */
+        width: 100%; /* From original CSS, for a slide-in full-width menu */
+        /* height: auto; /* Removed this - let height be 100vh for a full slide-in menu */
+        top: 0; /* Align to top */
+        left: 0; /* Align to left */
+        border-radius: 0 0 1rem 1rem; /* From original CSS */
+        padding: 1.5rem; /* From original CSS */
+        box-shadow: 0 0.2rem 1rem var(--shadow-light); /* From original CSS */
+}
+
+    .sidebar.hidden { /* This state means it's shown for mobile menu */
+        transform: translateX(0); /* Show when not hidden */
+}
+
+    .sidebar-header {
+        display: none; /* Hide sidebar header on mobile */
+}
+
+    .sidebar-nav {
+        /* display: none; */ /* Keep sidebar nav by default on mobile - JS will toggle */
+}
+
+    .main-content {
+        margin-left: 0;
+        padding: 1.5rem;
+        padding-bottom: 7rem; /* Space for mobile nav */
+        width: 100%; /* Take full width */
+}
+
+    .main-content.sidebar-hidden { /* Redundant if sidebar is fixed/hidden by default */
+        margin-left: 0;
+}
+
+    .dashboard-header {
+        border-radius: 0;
+        box-shadow: none;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        flex-direction: column; /* Stack on mobile (from updated CSS) */
+        align-items: flex-start; /* Align left (from updated CSS) */
+        gap: 1.5rem; /* From updated CSS */
+}
+
+    .page-title {
+        font-size: 2.4rem;
+        margin-bottom: 1rem;
+        width: 100%;
+        text-align: center;
+}
+
+    .menu-toggle {
+        display: block; /* Show menu toggle button */
+        order: -1; /* Push to the start */
+        margin-right: 0;
+        position: absolute; /* Position relative to header */
+        left: 1.5rem;
+        top: 1rem;
+}
+
+    .header-left {
+        width: 100%;
+        justify-content: center;
+        position: relative;
+}
+
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 1.5rem;
+        gap: 1rem; /* Smaller gap on mobile */
+}
+
+    .search-box {
+        flex-grow: 1;
+        max-width: none;
+        margin-right: 1rem;
+}
+    .search-box input {
+        width: 100%;
+        padding: 0.8rem 1.5rem 0.8rem 4rem;
+}
+
+    .header-right .admin-name {
+        display: none;
+}
+    .header-right .admin-avatar {
+        width: 3.5rem;
+        height: 3.5rem;
+        border-width: 0.2rem;
+}
+    .header-right .header-icon {
+        font-size: 2.2rem;
+}
+
+    .mobile-bottom-nav {
+        display: flex; /* Show on mobile */
+}
+
+    .dashboard-section {
+        padding: 2rem;
+        border-radius: 1rem;
+}
+
+    .section-title {
+        font-size: 2.2rem;
+        padding-bottom: 1.5rem;
+        margin-bottom: 2rem;
+}
+    /* Specific to order list filters on mobile */
+    .order-status-filters {
+        width: 100%;
+        justify-content: center; /* Center filter buttons on mobile */
+        margin-top: 10px; /* Adjust spacing below title */
+}
+    .order-status-filters .small-button {
+        flex-grow: 1; /* Make buttons fill width on mobile */
+        text-align: center;
+        margin-right: 0; /* Remove extra margin */
+}
+
+
+    .top-stat-cards-grid {
+        grid-template-columns: 1fr; /* Stack on mobile */
+        gap: 1.5rem;
+}
+
+    /* Original .cards-grid (if still used) */
+    .cards-grid,
+    .menu-items-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+}
+
+    .stat-card {
+        padding: 2rem;
+        border-radius: 0.8rem;
+}
+
+    .stat-card .stat-value {
+        font-size: 3.5rem;
+}
+
+    table th, table td {
+        padding: 1rem 1.2rem;
+        font-size: 1.3rem;
+}
+
+    /* Small button general style is applied to order list filter buttons */
+    /* .small-button {
+        padding: 0.6rem 1rem;
+        font-size: 1.2rem;
+} */
+
+    .menu-item-image {
+        height: 15rem;
+}
+
+    .menu-item-details {
+        padding: 1.5rem;
+}
+
+    .menu-item-card .item-name {
+        font-size: 1.8rem;
+}
+
+    .menu-item-card .item-price {
+        font-size: 1.6rem;
+}
+
+    .overview-grid { /* Stack on mobile, overridden for desktop below */
+        grid-template-columns: 1fr;
+}
+
+    .sales-figures-card, .orders-received-card {
+        padding: 1.5rem;
+}
+
+    /* Adjust for new dashboard-stat-card responsiveness */
+    .dashboard-stat-card {
+        padding: 1.5rem 2rem;
+}
+    .stat-icon {
+        width: 4.5rem;
+        height: 4.5rem;
+        font-size: 2rem;
+}
+    .stat-label {
+        font-size: 1.2rem;
+}
+    .stat-value {
+        font-size: 2.2rem;
+}
+
+    .orders-received-card .order-status-content {
+        flex-direction: column; /* Stack chart and breakdown vertically */
+        gap: 1.5rem;
+}
+
+    .donut-chart-container {
+        width: 10rem;
+        height: 10rem;
+}
+
+    .order-breakdown {
+        margin-left: 0;
+        padding-left: 0;
+        width: 100%;
+        text-align: center; /* Center breakdown items on mobile */
+}
+    .breakdown-item {
+        justify-content: center; /* Center each item */
+}
+}
+
+/* Tablet and Desktop View (76.8rem and up) - MERGED & CONSOLIDATED */
+@media (min-width: 76.8rem) {
+    /* Ensure sales-figures-card is displayed */
+    .sales-figures-card {
+        display: flex; /* Override any previous 'display: none' */
+}
+
+    /* Main content should not have extra margin on wider screens if sidebar is shown */
+    .main-content {
+        margin-left: 28rem; /* Ensure sidebar is visible and main content shifts */
+}
+
+    /* Top stat cards grid can stretch more if needed, or remain similar to tablet */
+    .top-stat-cards-grid {
+        grid-template-columns: repeat(4, 1fr); /* Force 4 columns if desired */
+        gap: 3rem;
+}
+
+    /* THIS IS THE FIX: Set sales figures and orders received side-by-side */
+    .overview-grid {
+        grid-template-columns: 1fr 1fr; /* Two equal columns for tablet/desktop */
+        gap: 20px; /* Space between the cards */
+}
+
+    .orders-received-card .order-status-content {
+        flex-direction: row; /* Layout content side-by-side for desktop/tablet */
+        justify-content: space-around;
+        align-items: center; /* Vertically align items in the flex container */
+}
+    .order-breakdown {
+        margin-left: 0; /* Reset margin from mobile */
+        padding-left: 0; /* Reset padding from mobile */
+        width: auto; /* Allow content to dictate width */
+        text-align: left;
+}
+    .donut-chart-container {
+        margin: 0; /* Reset margin from mobile */
+}
+    /* Reset order list filter buttons */
+    .order-status-filters {
+        width: auto; /* Let content dictate width */
+        justify-content: flex-end; /* Align to end */
+        margin-top: -20px; /* Reset position */
+}
+    .order-status-filters .small-button {
+        flex-grow: 0; /* Do not grow */
+        text-align: left;
+}
+}
+
+/* Smaller mobile adjustments (from Updated CSS) */
+@media (max-width: 48rem) { /* Converted from 480px */
+    .page-title {
+        font-size: 1.5em;
+}
+
+    .header-right {
+        flex-wrap: wrap;
+        justify-content: center;
+}
+    .search-box {
+        order: 1; /* Push search box to next line if needed */
+        width: 100%;
+        margin-top: 1rem; /* Converted from 10px */
+}
+    .header-icon, .admin-name, .admin-avatar {
+        order: 2;
+}
+    .admin-name {
+        display: none; /* Hide admin name on very small screens */
+}
+
+    .dashboard-stat-card {
+        padding: 1.5rem; /* Converted from 15px */
+}
+    .stat-label {
+        font-size: 0.8em;
+}
+    .stat-value {
+        font-size: 1.3em;
+}
+    .card-title {
+        font-size: 1.1em;
+}
+}
+
+
+
+
+
+
+
+
+/* --- Styles for Menu Management Page (as per menu management.jpg) --- */
+
+.menu-management-content {
+    gap: 2.5rem; /* Converted from 25px */
+    padding: 2.5rem; /* Converted from 25px */
+    background-color: var(--card-background-light); /* White background */
+    border-radius: 0.8rem; /* Converted from 8px */
+    box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.05); /* Converted from 0 4px 12px */
+    margin: 0; /* Ensures it fills the parent container by removing all external margins */
+    overflow: auto;
+}
+
+@media (min-width: 76.8rem) { /* Converted from 768px */
+    .menu-management-content {
+    grid-template-columns: 0.4fr 1.6fr; /* Two columns: Category (smaller) and Item List (larger) */
+}
+}
+
+/* Category section background, border, and stretching fix */
+.categories-section,
+.item-list-section {
+    background-color: transparent; /* Removed its own background */
+    padding: 2rem; /* Converted from 20px */
+    border-radius: 0.8rem; /* Converted from 8px */
+    box-shadow: none; /* Removed its own shadow */
+    border: none; /* Removed its own border */
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Ensure it stretches to full width */
+    margin: 0; /* Remove any external margins */
+}
+
+/* Section Header (Category and Food List) - flexed with add-button and lines removed */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.section-header .section-title {
+    font-size: 2.2rem; /* Converted from 22px */
+    color: var(--text-light);
+}
+
+.add-button {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 1rem 1.5rem; /* Converted from 10px 15px */
+    border-radius: 0.5rem; /* Converted from 5px */
+    cursor: pointer;
+    font-size: 1.4rem; /* Converted from 14px */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Converted from 5px */
+    transition: background-color 0.2s ease;
+}
+
+.add-button:hover {
+    background-color: #218838; /* Slightly darker green */
+}
+
+/* Remove all horizontal lines beneath section-title of the category */
+.categories-section hr {
+    display: none;
+}
+
+/* Remove the first horizontal line beneath the section-title of the food list */
+.item-list-section hr:first-of-type {
+    display: none;
+}
+
+
+/* Category List */
+.category-list {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem; /* Converted from 15px */
+    overflow-x: auto; /* Added for horizontal scrolling */
+    padding-bottom: 1rem; /* Added for scrollbar visibility */
+}
+
+.category-card {
+    flex-shrink: 0; 
+    /* display: flex; */
+    /* align-items: center; */
+    gap: 1.5rem; /* Converted from 15px */
+    padding: 4rem; /* Converted from 12px */
+    border: 0.1rem solid var(--border-color); /* Converted from 1px */
+    border-radius: 0.8rem; /* Converted from 8px */
+    background-color: var(--background-light);
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+}
+
+.category-card:hover {
+    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.08); /* Converted from 0 4px 8px */
+    transform: translateY(-0.2rem); /* Converted from -2px */
+}
+
+.category-card.active-category {
+    border-color: var(--primary-color);
+    background-color: rgba(40, 167, 69, 0.1); /* Light primary color background */
+    box-shadow: 0 0.4rem 0.8rem rgba(40, 167, 69, 0.1); /* Converted from 0 4px 8px */
+}
+
+.category-image {
+    width: 6rem; /* Converted from 60px */
+    height: 6rem; /* Converted from 60px */
+    border-radius: 0.6rem; /* Converted from 6px */
+    object-fit: cover;
+}
+
+.category-info {
+    flex-grow: 1;
+}
+
+.category-name {
+    font-size: 1.8rem; /* Converted from 18px */
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: 0.5rem; /* Converted from 5px */
+}
+
+.category-items-count {
+    font-size: 1.4rem; /* Converted from 14px */
+    color: var(--sidebar-text-light); /* Lighter text color */
+}
+
+/* Menu Items Table */
+.table-container {
+    overflow: auto; /* Ensures table is scrollable on small screens */
+}
+
+.menu-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: auto;/* Converted from 10px */
+}
+
+.menu-items-table th,
+.menu-items-table td {
+    text-align: left;
+    padding: 1.2rem 1.5rem; /* Converted from 12px 15px */
+    border-bottom: 0.1rem solid var(--border-color); /* Converted from 1px */
+    font-size: 1.4rem; /* Converted from 14px */
+    color: var(--text-light);
+}
+
+.menu-items-table th {
+    background-color: var(--background-light);
+    font-weight: 700;
+    color: var(--sidebar-text-light);
+    text-transform: uppercase;
+}
+
+.menu-items-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.menu-items-table .item-thumbnail {
+    width: 5rem; /* Converted from 50px */
+    height: 5rem; /* Converted from 50px */
+    border-radius: 0.5rem; /* Converted from 5px */
+    object-fit: cover;
+}
+
+.menu-items-table .action-btn {
+    background: none;
+    border: none;
+    font-size: 1.6rem; /* Converted from 16px */
+    cursor: pointer;
+    margin-right: 1rem; /* Converted from 10px */
+    color: var(--sidebar-text-light); /* Default icon color */
+    transition: color 0.2s ease;
+}
+
+.menu-items-table .action-btn:hover {
+    color: var(--primary-color);
+}
+
+.menu-items-table .edit-btn:hover {
+    color: var(--blue-accent);
+}
+
+.menu-items-table .delete-btn:hover {
+    color: #dc3545; /* Bootstrap Red */
+}
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.6); /* Black w/ opacity */
+    justify-content: center; /* These will only apply when display is set to 'flex' by JS */
+    align-items: center; /* These will only apply when display is set to 'flex' by JS */
+}
+
+.modal-content {
+    background-color: var(--card-background-light);
+    margin: auto;
+    padding: 3rem; /* Converted from 30px */
+    border-radius: 1rem; /* Converted from 10px */
+    width: 90%;
+    max-width: 50rem; /* Converted from 500px */
+    box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.2); /* Converted from 0 8px 20px */
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content h2 {
+    font-size: 2.8rem; /* Converted from 28px */
+    margin-bottom: 2rem; /* Converted from 20px */
+    color: var(--text-light);
+    text-align: center;
+}
+
+.modal .close-button {
+    color: #aaa;
+    position: absolute;
+    top: 1.5rem; /* Converted from 15px */
+    right: 2.5rem; /* Converted from 25px */
+    font-size: 3rem; /* Converted from 30px */
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.modal .close-button:hover,
+.modal .close-button:focus {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.modal .form-group {
+    margin-bottom: 2rem; /* Converted from 20px */
+}
+
+.modal .form-group label {
+    display: block;
+    margin-bottom: 0.8rem; /* Converted from 8px */
+    font-size: 1.6rem; /* Converted from 16px */
+    color: var(--text-light);
+}
+
+.modal .form-group input[type="text"],
+.modal .form-group input[type="number"],
+.modal .form-group input[type="file"],
+.modal .form-group select {
+    width: 100%;
+    padding: 1.2rem; /* Converted from 12px */
+    border: 0.1rem solid var(--border-color); /* Converted from 1px */
+    border-radius: 0.5rem; /* Converted from 5px */
+    font-size: 1.6rem; /* Converted from 16px */
+    background-color: var(--input-bg-light);
+    color: var(--input-text-light);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal .form-group input[type="file"] {
+    padding: 0.8rem; /* Converted from 8px */
+}
+
+.modal .form-group input[type="text"]:focus,
+.modal .form-group input[type="number"]:focus,
+.modal .form-group select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.3rem rgba(40, 167, 69, 0.25); /* Converted from 0 0 0 3px */
+    outline: none;
+}
+
+.modal .submit-button {
+    width: 100%;
+    padding: 1.5rem; /* Converted from 15px */
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem; /* Converted from 5px */
+    font-size: 1.8rem; /* Converted from 18px */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.modal .submit-button:hover {
+    background-color: #218838;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-2rem); } /* Converted from -20px */
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dark Mode Adjustments for Menu Management */
+body.dark-mode .menu-management-content {
+    background-color: var(--background-dark);
+    box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.2); /* Converted from 0 4px 12px */
+}
+
+body.dark-mode .categories-section,
+body.dark-mode .item-list-section {
+    background-color: transparent; /* Removed background for dark mode */
+    border: none; /* Removed border for dark mode */
+    box-shadow: none; /* Removed shadow for dark mode */
+}
+
+body.dark-mode .section-header .section-title {
+    color: var(--text-dark);
+}
+
+body.dark-mode .add-button {
+    background-color: var(--sidebar-active-bg-dark); /* Dark mode green */
+}
+
+body.dark-mode .add-button:hover {
+    background-color: #1a7131; /* Darker dark mode green */
+}
+
+body.dark-mode .category-card {
+    background-color: var(--background-dark);
+    border-color: var(--border-color-dark);
+}
+
+body.dark-mode .category-card:hover {
+    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.15); /* Converted from 0 4px 8px */
+}
+
+body.dark-mode .category-card.active-category {
+    border-color: var(--primary-color); /* Primary color stays vibrant */
+    background-color: rgba(76, 175, 80, 0.2); /* Adjusted light green for dark mode */
+    box-shadow: 0 0.4rem 0.8rem rgba(76, 175, 80, 0.15); /* Converted from 0 4px 8px */
+}
+
+body.dark-mode .category-name {
+    color: var(--text-dark);
+}
+
+body.dark-mode .category-items-count {
+    color: var(--sidebar-text-dark);
+}
+
+body.dark-mode .menu-items-table th {
+    background-color: var(--background-dark);
+    color: var(--sidebar-text-dark);
+    border-color: var(--border-color-dark);
+}
+
+body.dark-mode .menu-items-table td {
+    color: var(--text-dark);
+    border-color: var(--border-color-dark);
+}
+
+body.dark-mode .menu-items-table .action-btn {
+    color: var(--sidebar-text-dark);
+}
+
+body.dark-mode .menu-items-table .action-btn:hover {
+    color: var(--primary-color);
+}
+
+body.dark-mode .menu-items-table .edit-btn:hover {
+    color: var(--blue-accent);
+}
+
+body.dark-mode .menu-items-table .delete-btn:hover {
+    color: #dc3545; /* Bootstrap Red */
+}
+
+/* --- Core Responsive Adjustments for Dashboard Content Sections --- */
+
+/* General adjustments for screens up to 768px wide (typical tablets & large phones) */
+@media (max-width: 76.8rem) {
+    /* Ensure the main content area itself reduces its padding */
+    .main-content {
+    padding: 1.5rem; /* Reduced padding for smaller screens */
+}
+
+    /* Apply to generic dashboard sections for consistent padding and margin */
+    .dashboard-section {
+    padding: 1.5rem; /* Smaller internal padding */
+    margin-bottom: 2rem; /* Space between sections */
+}
+
+    /* Specific adjustments for the Menu Management Content */
+    .menu-management-content {
+    grid-template-columns: 1fr; /* Force categories and item list to stack vertically */
+    gap: 2rem; /* Adjust space between stacked sections */
+    padding: 1.5rem; /* Ensure this main section has consistent mobile padding */
+    margin: 0; /* Important: Remove all external margins to let it fill space */
+    box-shadow: none; /* Optionally reduce shadow for cleaner mobile look */
+    border-radius: 0; /* Optionally remove border-radius for full edge-to-edge feel */
+}
+
+    /* Adjust padding for the individual sections inside menu management */
+    .categories-section,
+    .item-list-section {
+    padding: 1.5rem; /* Consistent padding */
+}
+
+    /* Header within sections (e.g., "Categories" or "Food List") */
+    .section-header {
+    flex-direction: column; /* Stack title and button */
+    align-items: flex-start; /* Align stacked items to the left */
+    margin-bottom: 1rem; /* Reduced space below header */
+    gap: 0.8rem; /* Space between title and button */
+}
+
+    .section-header .section-title {
+    font-size: 2.2rem; /* Slightly smaller font size for titles */
+}
+
+    .add-button {
+    width: 100%; /* Make buttons full width */
+    justify-content: center; /* Center text and icon */
+    padding: 1.2rem; /* Adjust button padding */
+    font-size: 1.5rem; /* Smaller font size for button text */
+}
+
+    /* Category Cards specific adjustments */
+    .category-list {
+    /* display: grid; */ /* Removed grid display */
+    /* grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); */ /* Removed grid property */
+    gap: 1.2rem; /* Reduced gap between cards */
+    /* justify-content: center; */ /* Removed as not applicable to flex-direction: column for horizontal centering */
+}
+
+    .category-card {
+    flex-direction: column; /* Stack image and text vertically within cards */
+    align-items: center; /* Center content within card */
+    text-align: center;
+    padding: 1.2rem; /* Reduced card padding */
+    gap: 0.8rem; /* Space between image and text */
+}
+
+    .category-image {
+    width: 6rem; /* Smaller image size */
+    height: 6rem;
+    margin-bottom: 0.5rem; /* Add some space below the image */
+}
+
+    .category-name {
+    font-size: 1.6rem; /* Smaller font for category names */
+}
+
+    .category-items-count {
+    font-size: 1.3rem; /* Smaller font for item count */
+}
+
+    /* --- Table Responsiveness (Menu Items Table) --- */
+    .table-container {
+    overflow-x: auto; /* Essential: enables horizontal scrolling for wide tables */
+    -webkit-overflow-scrolling: touch; /* Improves scrolling on iOS */
+}
+
+    .menu-items-table {
+    width: 100%; /* Ensure table takes full available width */
+    min-width: 65rem; /* Set a minimum width to ensure columns don't collapse too much
+     This will activate horizontal scrolling for smaller screens.
+     Adjust this value based on your content. */
+    border-collapse: collapse; /* Ensure borders are properly collapsed */
+}
+
+    .menu-items-table th,
+    .menu-items-table td {
+    white-space: nowrap; /* Prevent text wrapping in table cells */
+    padding: 1rem 0.8rem; /* Adjusted padding for cells */
+    font-size: 1.3rem; /* Smaller font size for table text */
+}
+
+    .menu-items-table .item-thumbnail {
+    width: 4.5rem; /* Smaller thumbnail size */
+    height: 4.5rem;
+}
+
+    .menu-items-table .action-btn {
+    font-size: 1.3rem; /* Smaller action button icons/text */
+    padding: 0.6rem 1rem; /* Adjust padding for action buttons */
+    margin-right: 0.4rem; /* Smaller spacing between buttons */
+}
+
+    /* Modal Responsiveness */
+    .modal-content {
+    width: 90%; /* Make modal wider on mobile */
+    max-width: 50rem; /* Set a max width to prevent it from becoming too wide on larger mobiles */
+    padding: 2.5rem; /* Adjust modal padding */
+}
+
+    .modal-content h2 {
+    font-size: 2.5rem; /* Smaller modal title */
+    margin-bottom: 2rem;
+}
+
+    .modal .close-button {
+    font-size: 2.8rem; /* Larger close button for easier tapping */
+    top: 1rem;
+    right: 1.5rem;
+}
+
+    .modal .form-group label {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+    .modal .form-group input,
+    .modal .form-group select,
+    .modal .submit-button {
+    font-size: 1.6rem; /* Adjust input and button font size */
+    padding: 1.2rem; /* Adjust input and button padding */
+}
+}
+
+/* Further adjustments for very small devices (phones, up to 480px wide) */
+@media (max-width: 48rem) {
+    .main-content {
+    padding: 1rem; /* Even less padding for very small screens */
+}
+
+    .dashboard-section,
+    .menu-management-content {
+    padding: 1rem; /* Minimal padding for content areas */
+}
+
+    .section-header .section-title {
+    font-size: 2rem; /* Smaller header title */
+}
+
+    .add-button {
+    padding: 1rem; /* Smaller button padding */
+    font-size: 1.4rem;
+}
+
+    .category-list {
+    /* grid-template-columns: 1fr; */ /* Removed grid property */
+}
+
+    .category-card {
+    flex-direction: row; /* Keep as row or experiment with column if content fits better */
+    justify-content: flex-start;
+    text-align: left;
+}
+
+    .category-image {
+    margin-right: 1rem; /* Space between image and text in row layout */
+    margin-bottom: 0;
+}
+
+    .menu-items-table {
+    min-width: 55rem; /* Adjust minimum table width if needed for scrolling */
+}
+
+    .menu-items-table th,
+    .menu-items-table td {
+    padding: 0.8rem 0.5rem; /* Even smaller cell padding */
+    font-size: 1.2rem;
+}
+
+    .modal-content {
+    padding: 1.5rem; /* Reduce modal padding for very small screens */
+}
+}
+
+
+/* --- Styles for Menu Item Status Indicators --- */
+
+/* Base style for status text or badge */
+.item-status {
+    display: inline-flex; /* Use flexbox for alignment of text and potential dot */
+    align-items: center;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-transform: capitalize; /* Ensure status text starts with a capital letter */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Specific styles for 'Available' status */
+.item-status.available {
+    background-color: #e6f7ed; /* Light green background */
+    color: #28a745; /* Green text, matching primary color */
+    border: 1px solid #28a745;
+}
+
+/* Specific styles for 'Unavailable' status */
+.item-status.unavailable {
+    background-color: #fcebeb; /* Light red background */
+    color: #dc3545; /* Red text */
+    border: 1px solid #dc3545;
+}
+
+/* Optional: A small colored dot next to the status text */
+.item-status::before {
+    content: '';
+    display: inline-block;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    background-color: currentColor; /* Use the text color for the dot */
+}
+
+/* Adjustments for the table cells to accommodate status indicators */
+.menu-items-table td.item-status-cell {
+    /* Optional: Center the status text in its cell */
+    text-align: center;
+}
+
+
+
+/* --- Orders Page Specific Styles --- */
+.orders-management-content {
+    gap: 2.5rem; 
+    padding: 2.5rem; 
+    background-color: var(--card-background-light); 
+    border-radius: 0.8rem; 
+    box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.05); 
+    margin: 0; 
+    overflow: auto;
+}
+
+.orders-management-content .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.orders-management-content .section-title {
+    color: var(--text-color-dark);
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.orders-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 8px 10px;
+    background-color: var(--input-bg-color);
+    width: 250px; /* Adjust as needed */
+}
+
+.orders-search-box input {
+    border: none;
+    outline: none;
+    background: transparent;
+    padding-right: 25px; /* Space for icon */
+    color: var(--text-color);
+    width: 100%;
+}
+
+.orders-search-box .fas.fa-search {
+    position: absolute;
+    right: 10px;
+    color: var(--icon-color);
+}
+
+.filter-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.filter-button:hover {
+    background-color: var(--primary-color-dark);
+}
+
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: auto;
+}
+
+.orders-table th,
+.orders-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.orders-table th {
+    background-color: var(--header-bg-color);
+    font-weight: 600;
+    color: var(--header-text-color);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.orders-table tbody tr:hover {
+    background-color: var(--hover-bg-color);
+}
+
+/* Order Status Badges */
+.order-status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
+
+.status-completed {
+    background-color: #28a745; /* Green */
+}
+
+.status-pending {
+    background-color: #ffc107; /* Orange/Yellow */
+    color: #333; /* Darker text for visibility */
+}
+
+.status-processing {
+    background-color: #007bff; /* Blue */
+}
+
+/* Add more status styles as needed */
+
+/* Action Icons in table */
+.orders-table td .fas {
+    cursor: pointer;
+    margin-right: 10px;
+    color: var(--icon-color);
+    transition: color 0.2s ease;
+}
+
+.orders-table td .fas:hover {
+    color: var(--primary-color);
+}
+
+
+
+/* --- Customers Management Specific Styles --- */
+.customers-management-content {
+    gap: 2.5rem; 
+    padding: 2.5rem; 
+    background-color: var(--card-background-light); 
+    border-radius: 0.8rem; 
+    box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.05); 
+    margin: 0; 
+    overflow: auto;
+}
+
+
+/* .settings-content {
+    gap: 2.5rem; 
+    padding: 2.5rem; 
+    background-color: var(--card-background-light); 
+    border-radius: 0.8rem; 
+    box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.05); 
+    margin: 0; 
+    overflow: auto;
+} */
+/* --- Admin Settings Page Specific Styles --- */
+
+.settings-content {
+    gap: 2.5rem; 
+    padding: 2.5rem; 
+    background-color: var(--card-background-light); 
+    border-radius: 0.8rem; 
+    box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.05); 
+    margin: 0; 
+    overflow: auto;
+}
+
+/* .settings-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+    flex-grow: 1; 
+} */
+
+/* Operational Hours Section */
+.operational-hours-status {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+}
+
+.operational-hours-status .status-indicator {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: #ccc; 
+    box-shadow: 0 0 .5rem rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.operational-hours-status #operationalStatusText {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-color);
+    flex-grow: 1; 
+}
+
+.operational-hours-status .toggle-button {
+    padding: 10px 20px;
+    background-color: var(--primary-color); 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+
+/* Location and Price Tags Table (general table styles might already cover much of this) */
+
+/* Action Icons in Table */
+.locations-table .edit-icon {
+    color: var(--green-accent); /* Or a suitable edit color */
+}
+
+.locations-table .delete-icon:hover {
+    color: #c82333; 
+}

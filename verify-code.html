@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Code - Rich Cafe</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container verify-code-container">
+        <div class="verify-code-header">
+            <img src="assets/logo.png" alt="Rich Cafe Logo" class="logo">
+            <h1>Verify Your Phone Number</h1>
+            <p class="tagline">Please enter the 6-digit code sent to <span id="displayPhoneNumber" class="highlight-text">your number</span>.</p>
+        </div>
+
+        <form id="verifyCodeForm" class="form-card otp-form">
+            <div class="otp-inputs">
+                <input type="text" class="code-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                <input type="text" class="code-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                <input type="text" class="code-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                <input type="text" class="code-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                <input type="text" class="code-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+                <input type="text" class="code-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" required>
+            </div>
+            <button type="submit" class="button primary-button">Verify Code</button>
+            <p class="resend-text">Didn't receive a code? <a href="#" id="resendCodeLink" class="action-link">Resend Code</a></p>
+        </form>
+    </div>
+
+    <script src="js/verify-code.js"></script>
+</body>
+</html>

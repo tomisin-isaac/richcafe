@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Rich Cafe</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="admin-dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/logo.png" alt="Rich Cafe Logo" class="logo">
+                <h2 class="sidebar-title">Admin Panel</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="admin-overview.html" class="nav-item active"><i class="fas fa-tachometer-alt icon"></i> Overview</a></li>
+                    <li><a href="admin-menu.html" class="nav-item"><i class="fas fa-book icon"></i> Menu Management</a></li>
+                    <li><a href="admin-orders.html" class="nav-item"><i class="fas fa-utensils icon"></i> Orders</a></li>
+                    <li><a href="admin-customers.html" class="nav-item"><i class="fas fa-users icon"></i> Customers</a></li>
+                    <li><a href="admin-analysis.html" class="nav-item"><i class="fas fa-chart-line icon"></i> Analysis</a></li>
+                    <li><a href="admin-settings.html" class="nav-item"><i class="fas fa-cog icon"></i> Settings</a></li>
+                    <li><a href="#" class="nav-item logout-link" id="adminLogout"><i class="fas fa-sign-out-alt icon"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1 class="page-title">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <i class="fas fa-bell header-icon"></i>
+                    <i class="fas fa-envelope header-icon"></i>
+                    <span class="admin-name">Admin User</span>
+                    <img src="assets/admin-avatar.png" alt="Admin Avatar" class="admin-avatar">
+                </div>
+            </header>
+
+            <p>Please select a navigation item from the sidebar.</p>
+            <p>Redirecting to Overview...</p>
+
+        </main>
+
+        <nav class="mobile-bottom-nav">
+            <a href="admin-overview.html" class="mobile-nav-item active">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Overview</span>
+            </a>
+            <a href="admin-orders.html" class="mobile-nav-item">
+                <i class="fas fa-utensils"></i>
+                <span>Orders</span>
+            </a>
+            <a href="admin-menu.html" class="mobile-nav-item">
+                <i class="fas fa-book"></i>
+                <span>Menu</span>
+            </a>
+            <a href="admin-customers.html" class="mobile-nav-item">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a href="admin-settings.html" class="mobile-nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+    </div>
+
+    <script>
+        // Redirect to admin-overview.html on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.location.pathname.endsWith('admin-dashboard.html')) {
+                window.location.href = 'admin-overview.html';
+            }
+        });
+    </script>
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>

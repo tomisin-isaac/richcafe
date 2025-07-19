@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Rich Cafe</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container admin-login-container">
+        <div class="admin-login-header">
+            <img src="assets/logo.png" alt="Rich Cafe Logo" class="logo">
+            <h1>Admin Panel Login</h1>
+            <p class="tagline">Access the administrative dashboard.</p>
+        </div>
+
+        <form id="adminLoginForm" class="form-card">
+            <div class="input-group">
+                <label for="adminUsername">Username:</label>
+                <input type="text" id="adminUsername" name="username" placeholder="Enter admin username" required>
+            </div>
+            <div class="input-group">
+                <label for="adminEmail">Email:</label>
+                <input type="email" id="adminEmail" name="email" placeholder="Enter admin email" required>
+            </div>
+            <div class="input-group">
+                <label for="adminPassword">Password:</label>
+                <input type="password" id="adminPassword" name="password" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="button primary-button">Login</button>
+            <p id="adminLoginStatus" class="status-message"></p>
+        </form>
+
+        <div class="back-to-home-link">
+            <p><a href="index.html" class="action-link">Back to User Login</a></p>
+        </div>
+    </div>
+
+    <script src="js/admin-login.js"></script>
+</body>
+</html>

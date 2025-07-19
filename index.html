@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rich Cafe - Welcome</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container welcome-container">
+        <div class="welcome-header">
+            <img src="images/logo.png" alt="Rich Cafe Logo" class="logo">
+            <h1>Welcome to Rich Cafe!</h1>
+            <p class="tagline">Order delicious meals, get exclusive offers, and enjoy fast delivery.</p>
+        </div>
+
+        <form id="registrationForm" class="form-card">
+            <h2>Register or Login</h2>
+            <div class="input-group">
+                <label for="userName">Full Name:</label>
+                <input type="text" id="userName" name="userName" placeholder="Enter your full name" required>
+            </div>
+            <div class="input-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="e.g., you@example.com" required>
+            </div>
+            <div class="input-group phone-input-group">
+                <label for="phoneNumber">Phone Number:</label>
+                <div class="phone-input-fields">
+                    <select id="countryCode" name="countryCode" required>
+                        <option value="+234">+234 (Nigeria)</option>
+                        <option value="+1">+1 (USA/Canada)</option>
+                        <option value="+44">+44 (UK)</option>
+                    </select>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="e.g., 8012345678" required>
+                </div>
+            </div>
+            <button type="submit" class="button primary-button">Continue</button>
+            <p id="registrationStatus" class="status-message"></p>
+        </form>
+
+        <div class="admin-login-link">
+            <p>Are you an admin? <a href="admin-login.html">Login here</a></p>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
