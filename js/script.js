@@ -8,6 +8,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const userNameInput = document.getElementById('userName');
     const registrationStatus = document.getElementById('registrationStatus');
 
+    // NEW: Function to handle a successful login/registration
+    function handleSuccessfulLogin(userData) {
+        // Prepare the user object to save to local storage
+        const user = {
+            name: userData.name,
+            email: userData.email,
+            phone: userData.phone,
+        };
+
+        // Save the single user object to localStorage under 'currentUser' for the profile page
+        localStorage.setItem('currentUser', JSON.stringify(user));
+
+        // Save customer data to the 'customers' array for admin use
+        saveCustomerToLocalStorage({
+            fullName: user.name,
+            emailAddress: user.email,
+            phoneNumber: user.phone,
+        });
+
+        console.log("Logged in user saved to 'currentUser' and 'customers' array.");
+    }
+
+
     // Function to save customer data to localStorage
     function saveCustomerToLocalStorage(customer) {
         let customers = JSON.parse(localStorage.getItem('customers')) || [];
@@ -48,9 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const registrationData = {
-                phoneNumber: fullPhoneNumber,
+                phone: fullPhoneNumber,
                 email: emailInput.value.trim(),
-                userName: userNameInput.value.trim()
+                name: userNameInput.value.trim()
             };
 
             console.log('Frontend (script.js): Sending registration/login data:', registrationData);
@@ -68,17 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Frontend (script.js): Received response:', data);
 
                 if (response.ok) {
-                    // IMPORTANT: Save customer data to localStorage upon successful registration/login
-                    saveCustomerToLocalStorage({
-                        fullName: registrationData.userName,
-                        emailAddress: registrationData.email,
-                        phoneNumber: registrationData.phoneNumber
-                    });
-
                     if (data.status === 'otp_sent') {
                         sessionStorage.setItem('pendingRegistration', JSON.stringify({
                             tempId: data.tempId,
-                            phoneNumber: fullPhoneNumber
+                            phone: fullPhoneNumber
                         }));
 
                         registrationStatus.textContent = data.message;
@@ -87,7 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else if (data.status === 'login_success') {
                         registrationStatus.textContent = data.message;
                         registrationStatus.style.color = 'green';
+
+                        // --- NEW: Handle successful login and save user data ---
+                        handleSuccessfulLogin(data.user || registrationData);
                         window.location.href = 'homepage.html';
+                        // --- End NEW ---
                     } else {
                         registrationStatus.textContent = data.message || 'An unexpected status was received.';
                         registrationStatus.style.color = 'orange';
@@ -103,6 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // --- All other existing functions remain below this line ---
 
     // NO CHART CODE SHOULD BE HERE
 

@@ -44,25 +44,26 @@ function generateOtp() {
 
 // Authentication endpoint for both Login and Initiation of Registration
 app.post('/auth', async (req, res) => {
-    const { phoneNumber, email, userName } = req.body;
+    const { phone, email, name } = req.body;
     console.log('Backend (/auth): Received request body:', req.body);
 
     // Basic validation
-    if (!phoneNumber || !email || !userName) {
+    if (!phone || !email || !name) {
         console.error('Backend (/auth): Missing required fields.');
         return res.status(400).json({ message: 'All fields are required.' });
     }
 
     // --- Check if user exists (Login scenario) ---
     const existingUser = registeredUsers.find(user =>
-        (user.phoneNumber === phoneNumber || user.email === email)
+        (user.phone === phone || user.email === email)
     );
 
     if (existingUser) {
-        console.log(`Backend (/auth): User ${existingUser.userName} (Email: ${email}) logged in.`);
+        console.log(`Backend (/auth): User ${existingUser.name} (Email: ${email}) logged in.`);
         return res.status(200).json({
             status: 'login_success',
-            message: 'Login successful! Welcome back.'
+            message: 'Login successful! Welcome back.',
+            user: existingUser
         });
     }
 
@@ -70,7 +71,7 @@ app.post('/auth', async (req, res) => {
 
     // Prevent re-registration attempts if email/phone is already in pending queue
     const pendingUserByEmail = Object.values(pendingRegistrations).find(
-        p => p.email === email && p.phoneNumber === phoneNumber
+        p => p.email === email || p.phone === phone
     );
 
     if (pendingUserByEmail) {
@@ -83,14 +84,14 @@ app.post('/auth', async (req, res) => {
             // --- Termii Send SMS for Resend in /auth ---
             const termiiResponse = await axios.post(TERMI_SMS_URL, {
                 api_key: TERMI_API_KEY,
-                to: phoneNumber, // Phone number in E.164 format from frontend
+                to: phone, // Phone number in E.164 format from frontend
                 from: TERMI_SENDER_ID, // Your Termii Sender ID
                 sms: `Your new verification code is: ${otp}`,
                 type: 'plain',
                 channel: 'dnd' // 'dnd' often works better for verification codes
             });
 
-            console.log(`Backend (/auth): SMS RESENT (Termii Response: ${termiiResponse.data.message}) to ${phoneNumber}: ${otp}`);
+            console.log(`Backend (/auth): SMS RESENT (Termii Response: ${termiiResponse.data.message}) to ${phone}: ${otp}`);
             // --- End Termii SMS ---
 
             return res.status(200).json({
@@ -116,9 +117,9 @@ app.post('/auth', async (req, res) => {
         return res.status(409).json({ message: 'Email already registered. Please login.' });
     }
 
-    const phoneRegistered = registeredUsers.some(user => user.phoneNumber === phoneNumber);
+    const phoneRegistered = registeredUsers.some(user => user.phone === phone);
     if (phoneRegistered) {
-        console.error(`Backend (/auth): Phone number ${phoneNumber} already fully registered.`);
+        console.error(`Backend (/auth): Phone number ${phone} already fully registered.`);
         return res.status(409).json({ message: 'Phone number already registered. Please login.' });
     }
 
@@ -128,9 +129,9 @@ app.post('/auth', async (req, res) => {
 
     // Store pending user data and OTP
     pendingRegistrations[tempId] = {
-        phoneNumber: phoneNumber,
+        phone,
         email,
-        userName,
+        name,
         otp,
         timestamp: Date.now() // For OTP expiry (e.g., valid for 5 minutes)
     };
@@ -139,14 +140,14 @@ app.post('/auth', async (req, res) => {
         // --- Termii Send SMS for New Registration ---
         const termiiResponse = await axios.post(TERMI_SMS_URL, {
             api_key: TERMI_API_KEY,
-            to: phoneNumber, // Phone number in E.164 format from frontend
+            to: phone, // Phone number in E.164 format from frontend
             from: TERMI_SENDER_ID, // Your Termii Sender ID
             sms: `Your verification code for food ordering is: ${otp}`,
             type: 'plain',
             channel: 'dnd' // 'dnd' often works better for verification codes
         });
 
-        console.log(`Backend (/auth): SMS SENT (Termii Response: ${termiiResponse.data.message}) to ${phoneNumber}: ${otp}`);
+        console.log(`Backend (/auth): SMS SENT (Termii Response: ${termiiResponse.data.message}) to ${phone}: ${otp}`);
         console.log('Backend (/auth): Current Pending Registrations:', pendingRegistrations);
         // --- End Termii SMS ---
 
@@ -169,9 +170,9 @@ app.post('/auth', async (req, res) => {
 // Endpoint to verify OTP
 app.post('/verify-otp', (req, res) => {
     console.log('Backend (/verify-otp): Received request. Body:', req.body);
-    const { tempId, otp, phoneNumber } = req.body;
+    const { tempId, otp, phone } = req.body;
 
-    if (!tempId || !otp || !phoneNumber) {
+    if (!tempId || !otp || !phone) {
         console.error('Backend (/verify-otp): Error: Missing tempId, OTP, or phoneNumber.');
         return res.status(400).json({ message: 'Missing temporary ID, OTP, or phone number.' });
     }
@@ -184,8 +185,8 @@ app.post('/verify-otp', (req, res) => {
     }
 
     // Basic check for phone number consistency (optional but good for robustness)
-    if (pendingUser.phoneNumber !== phoneNumber) {
-        console.error(`Backend (/verify-otp): Phone number mismatch. Expected: ${pendingUser.phoneNumber}, Received: ${phoneNumber}`);
+    if (pendingUser.phone !== phone) {
+        console.error(`Backend (/verify-otp): Phone number mismatch. Expected: ${pendingUser.phone}, Received: ${phone}`);
         return res.status(400).json({ message: 'Phone number mismatch for this verification request.' });
     }
 
@@ -200,18 +201,19 @@ app.post('/verify-otp', (req, res) => {
     console.log(`Backend (/verify-otp): Comparing received OTP '${otp}' with stored OTP '${pendingUser.otp}'`);
     if (pendingUser.otp === otp) {
         const newUser = {
-            phoneNumber: pendingUser.phoneNumber,
+            phone: pendingUser.phone,
             email: pendingUser.email,
-            userName: pendingUser.userName,
+            name: pendingUser.name,
         };
         registeredUsers.push(newUser);
         delete pendingRegistrations[tempId]; // Remove from pending
-        console.log(`Backend (/verify-otp): User ${newUser.userName} successfully registered and verified.`);
+        console.log(`Backend (/verify-otp): User ${newUser.name} successfully registered and verified.`);
         console.log('Backend (/verify-otp): Current Registered Users:', registeredUsers);
 
         return res.status(200).json({
             status: 'registration_complete',
-            message: 'Account verified and created! Welcome.'
+            message: 'Account verified and created! Welcome.',
+            user: newUser
         });
     } else {
         console.error(`Backend (/verify-otp): Invalid OTP for tempId ${tempId}. Received: ${otp}, Expected: ${pendingUser.otp}`);
@@ -222,18 +224,18 @@ app.post('/verify-otp', (req, res) => {
 // Endpoint to resend OTP
 app.post('/resend-otp', async (req, res) => {
     console.log('Backend (/resend-otp): Received request. Body:', req.body);
-    const { phoneNumber, tempId } = req.body;
+    const { phone, tempId } = req.body;
 
-    if (!phoneNumber) {
-        console.error('Backend (/resend-otp): Phone number is required.');
-        return res.status(400).json({ message: 'Phone number is required to resend code.' });
+    if (!phone) {
+        console.error('Backend (/resend-otp): Phone is required.');
+        return res.status(400).json({ message: 'Phone is required to resend code.' });
     }
 
     let foundTempId = tempId;
     let pendingUser = pendingRegistrations[tempId];
 
     if (!pendingUser) {
-        foundTempId = Object.keys(pendingRegistrations).find(key => pendingRegistrations[key].phoneNumber === phoneNumber);
+        foundTempId = Object.keys(pendingRegistrations).find(key => pendingRegistrations[key].phone === phone);
         if (foundTempId) {
             pendingUser = pendingRegistrations[foundTempId];
         }
@@ -248,17 +250,20 @@ app.post('/resend-otp', async (req, res) => {
             // --- Termii Send SMS for Resend in /resend-otp ---
             const termiiResponse = await axios.post(TERMI_SMS_URL, {
                 api_key: TERMI_API_KEY,
-                to: phoneNumber, // Phone number in E.164 format from frontend
+                to: phone, // Phone number in E.164 format from frontend
                 from: TERMI_SENDER_ID, // Your Termii Sender ID
                 sms: `Your new verification code is: ${newOtp}`,
                 type: 'plain',
                 channel: 'dnd' // 'dnd' often works better for verification codes
             });
 
-            console.log(`Backend (/resend-otp): SMS RESENT (Termii Response: ${termiiResponse.data.message}) to ${phoneNumber}: ${newOtp}`);
+            console.log(`Backend (/resend-otp): SMS RESENT (Termii Response: ${termiiResponse.data.message}) to ${phone}: ${newOtp}`);
             // --- End Termii SMS ---
 
-            return res.status(200).json({ message: 'New code sent to your phone number.' });
+            return res.status(200).json({ 
+                message: 'New code sent to your phone number.', 
+                tempId: foundTempId
+            });
         } catch (error) {
                 console.error(`Backend (/resend-otp): Error sending Termii SMS on resend: ${error.message}`);
             if (error.response) {
@@ -267,7 +272,7 @@ app.post('/resend-otp', async (req, res) => {
             return res.status(500).json({ message: 'Failed to resend SMS code.' });
         }
     } else {
-        console.error(`Backend (/resend-otp): No pending registration found for phone number: ${phoneNumber}`);
+        console.error(`Backend (/resend-otp): No pending registration found for phone number: ${phone}`);
         return res.status(404).json({ message: 'No pending registration found for this phone number.' });
     }
 });

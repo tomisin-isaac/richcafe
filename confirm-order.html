@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Confirm Order - Rich Cafe</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* Small page-specific styles (keeps everything centered like product-details) */
+    .confirm-container {
+      max-width: 45rem;
+      margin: 0 auto;
+      min-height: 100dvh;
+      padding-bottom: 9.6rem;
+      font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--background-light);
+    }
+
+    .confirm-header {
+      display:flex;
+      align-items:center;
+      gap:1.2rem;
+      padding:1.6rem;
+      background: var(--card-background-light);
+      position: sticky;
+      top:0;
+      z-index:5;
+      border-bottom:1px solid var(--border-color);
+    }
+    .confirm-back-btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height:3.6rem;width:3.6rem;border-radius:1rem;border:1px solid var(--border-color);
+      background:#fff;color:var(--text-light);
+    }
+    .confirm-title { font-size:1.8rem; font-weight:700; color:var(--text-light); }
+
+    .selections-card {
+      margin:1.6rem;
+      background:#fff;
+      border-radius:1rem;
+      padding:1.4rem;
+      box-shadow: none;
+      border: 1px solid var(--border-color);
+    }
+    .selections-header { font-weight:700; margin-bottom:0.8rem; color:var(--text-light); font-size:1.6rem; }
+    .selection-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:1rem;
+      padding-bottom:0.8rem;
+    }
+    .selection-left { color:#777; font-size:1.4rem; line-height:1.8; }
+    .selection-thumb {
+      width:6.6rem;
+      height:6.6rem;
+      border-radius:1rem;
+      background:#f6eecb;
+      border:1px solid var(--border-color);
+      flex:0 0 6.6rem;
+      object-fit:cover;
+    }
+
+    .selections-actions {
+      margin-top:1rem;
+      display:flex;
+      gap:1rem;
+      align-items:center;
+    }
+    .btn-add-pack {
+      display:inline-flex;
+      align-items:center;
+      gap:.8rem;
+      background:#fff;
+      border-radius:1rem;
+      padding:.9rem 1.2rem;
+      border:1px solid var(--border-color);
+      color:var(--primary-color);
+      font-weight:700;
+      text-decoration:none;
+      cursor:pointer;
+    }
+
+    .totals-bar {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 1.6rem;
+      width: 100%;
+      max-width: 45rem;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem;
+      padding:1.2rem;
+      box-sizing:border-box;
+      background:transparent;
+      z-index:120;
+    }
+
+    .totals-left { font-size:1.4rem; color:var(--text-light); }
+    .totals-right { font-size:1.4rem; font-weight:700; color:var(--text-light); }
+
+    .select-location-btn {
+      width:100%;
+      margin-top:.8rem;
+      padding:1.2rem;
+      border-radius:1rem;
+      background:var(--primary-color);
+      color:#fff;
+      font-size:1.6rem;
+      font-weight:800;
+      border:none;
+      cursor:pointer;
+    }
+
+    .edit-selections-row {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:.8rem;
+      background:#f1f1f1;
+      padding:.8rem;
+      border-radius:.8rem;
+      color:#666;
+      cursor:pointer;
+    }
+
+    /* small responsive tweak */
+    @media(min-width:900px){
+      .confirm-container { margin-top: 1.2rem; border-radius: 10px; overflow:hidden; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="confirm-container">
+    <!-- header -->
+    <header class="confirm-header">
+      <button class="confirm-back-btn" id="confirmBackBtn" aria-label="back"><i class="fas fa-arrow-left"></i></button>
+      <h1 class="confirm-title">Confirm Order</h1>
+    </header>
+
+    <!-- selections card -->
+    <main>
+      <section class="selections-card" id="selectionsCard" aria-live="polite">
+        <div class="selections-header">Your Selections</div>
+        <div id="selectionsList">
+          <!-- dynamic content -->
+        </div>
+
+        <!-- Edit / Add actions -->
+        <div id="afterSelections">
+          <div class="edit-selections-row" id="editSelectionsRow" role="button" tabindex="0">
+            <div>Edit Selections</div>
+            <div><i class="fas fa-chevron-right"></i></div>
+          </div>
+
+          <div class="selections-actions">
+            <button class="btn-add-pack" id="addAnotherPack"><i class="fas fa-plus-circle" style="color:var(--primary-color);"></i> Add Another Pack</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- totals and CTA (fixed) -->
+  <div class="totals-bar">
+    <div style="flex:1;">
+      <div class="totals-left">Total</div>
+    </div>
+    <div style="flex:0 0 16rem; text-align:right;">
+      <div class="totals-right" id="orderTotal">₦0</div>
+      <button id="selectLocationBtn" class="select-location-btn">Select Location</button>
+    </div>
+  </div>
+
+  <script src="js/confirm-order.js"></script>
+</body>
+</html>

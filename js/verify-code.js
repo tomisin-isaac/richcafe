@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const pendingRegistration = JSON.parse(sessionStorage.getItem('pendingRegistration'));
 
     // Display phone number if available
-    if (displayPhoneNumberElement && pendingRegistration && pendingRegistration.phoneNumber) {
-        displayPhoneNumberElement.textContent = pendingRegistration.phoneNumber;
+    if (displayPhoneNumberElement && pendingRegistration && pendingRegistration.phone) {
+        displayPhoneNumberElement.textContent = pendingRegistration.phone;
     } else {
         displayPhoneNumberElement.textContent = 'your number'; // Default text if not found
         // If no pending registration is found, it's good practice to redirect them back
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Frontend (verify-code.js): Attempting to verify code...');
             console.log('Frontend (verify-code.js): tempId:', pendingRegistration.tempId);
             console.log('Frontend (verify-code.js): OTP:', enteredCode);
-            console.log('Frontend (verify-code.js): PhoneNumber from session:', pendingRegistration.phoneNumber);
+            console.log('Frontend (verify-code.js): Phone from session:', pendingRegistration.phone);
 
             try {
                 const response = await fetch('http://localhost:3000/verify-otp', {
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({
                         tempId: pendingRegistration.tempId,
                         otp: enteredCode,
-                        phoneNumber: pendingRegistration.phoneNumber // Pass phone number for robust check
+                        phone: pendingRegistration.phone // Pass phone number for robust check
                     })
                 });
 
@@ -89,6 +89,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (response.ok) {
                         alert(result.message);
+
+                            if (result.user) {
+                            localStorage.setItem("userProfileData", JSON.stringify({
+                                name: result.user.name,
+                                email: result.user.email,
+                                phone: result.user.phone
+                            }));
+                            localStorage.setItem("isLoggedIn", "true");
+                        }
                         sessionStorage.removeItem('pendingRegistration'); // Clear session storage
                         window.location.href = 'homepage.html'; // Successfully registered and logged in
                     } else {
@@ -112,13 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const pendingRegistration = JSON.parse(sessionStorage.getItem('pendingRegistration'));
 
-            if (!pendingRegistration || !pendingRegistration.phoneNumber) {
+            if (!pendingRegistration || !pendingRegistration.phone) {
                 alert('No pending registration found. Please start again from the welcome page.');
                 window.location.href = 'index.html';
                 return;
             }
 
-            console.log('Frontend (verify-code.js): Attempting to resend OTP for:', pendingRegistration.phoneNumber);
+            console.log('Frontend (verify-code.js): Attempting to resend OTP for:', pendingRegistration.phone);
+
 
             try {
                 const response = await fetch('http://localhost:3000/resend-otp', {
@@ -127,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        phoneNumber: pendingRegistration.phoneNumber,
+                        phone: pendingRegistration.phone,
                         tempId: pendingRegistration.tempId // Pass tempId for more precise resend if backend needs it
                     })
                 });

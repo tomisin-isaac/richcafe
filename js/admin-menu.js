@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const addItemModal = document.getElementById('addItemModal');
     const closeButtons = document.querySelectorAll('.modal .close-button');
 
+    // NEW: Elements for dynamic sizes/prices - MERGED
+    const itemSizesContainer = document.getElementById('itemSizesContainer');
+    const addSizeBtn = document.getElementById('addSizeBtn');
+    let sizeCounter = 1; // To give unique data-size-id for each dynamically added row
+
     function openModal(modal) {
         modal.style.display = 'flex'; // Use flex to center
         console.log(`admin-menu.js: Opened modal: ${modal.id}`);
@@ -29,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // A variable to store the ID of the currently active category for new item creation
     let activeCategoryIdForNewItem = null; // Initially null, will be set to a specific category ID or null for 'all'
 
-    // Open Add Item Modal
+    // Open Add Item Modal - MODIFIED for active category check
     if (addItemBtn && addItemModal) {
         addItemBtn.addEventListener('click', () => {
             const activeCategoryCard = document.querySelector('.category-card.active-category');
@@ -41,8 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 activeCategoryIdForNewItem = null;
                 console.warn("admin-menu.js: Add Item button clicked but no specific category is active. Button should be hidden.");
-                // Alert should ideally not be needed if button is correctly hidden
-                alert("Please select a specific category to add an item.");
+                alert("Please select a specific category to add an item."); // Keep alert for user feedback
             }
         });
     }
@@ -63,6 +67,37 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal(addItemModal);
         }
     });
+
+    // --- Dynamic Size/Price Inputs (NEW SECTION) --- MERGED
+    if (addSizeBtn && itemSizesContainer) {
+        addSizeBtn.addEventListener('click', () => {
+            sizeCounter++; // Increment counter for unique ID
+            const newSizeInputHtml = `
+                <div class="size-price-input" data-size-id="${sizeCounter}">
+                    <input type="text" class="itemSize" placeholder="Size (e.g., Medium)" required>
+                    <input type="number" class="itemPrice" placeholder="Price ($)" step="0.01" required>
+                    <button type="button" class="remove-size-btn"><i class="fas fa-times-circle"></i></button>
+                </div>
+            `;
+            itemSizesContainer.insertAdjacentHTML('beforeend', newSizeInputHtml);
+            console.log(`admin-menu.js: Added new size/price input field (ID: ${sizeCounter}).`);
+        });
+
+        // Use event delegation for removing size/price inputs
+        itemSizesContainer.addEventListener('click', (event) => {
+            if (event.target.closest('.remove-size-btn')) {
+                const sizePriceDiv = event.target.closest('.size-price-input');
+                // Ensure at least one size/price input remains
+                if (itemSizesContainer.children.length > 1) {
+                    const sizeId = sizePriceDiv.dataset.sizeId;
+                    sizePriceDiv.remove();
+                    console.log(`admin-menu.js: Removed size/price input field (ID: ${sizeId}).`);
+                } else {
+                    alert("You must have at least one size and price for the item.");
+                }
+            }
+        });
+    }
 
     // --- Category Data Management (Local Storage & Rendering) ---
     let categories = []; // This array will hold the current categories
@@ -147,10 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'category-card';
             card.dataset.id = category.id; // Store ID for selection
 
-            // Determine the displayed name for the category card
-            const displayedName = `${category.name}`; // Always show just the name in H3, count is below
-
-            // The text for the count below the title should always be "Items"
+            const displayedName = `${category.name}`;
             const countLabel = 'Items';
 
             card.innerHTML = `
@@ -210,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 firstCategoryCard.classList.add('active-category');
                 // Ensure the addItemBtn is visible if the first category is not 'all'
                 if (firstCategoryCard.dataset.id !== 'all' && addItemBtn) {
-                     addItemBtn.style.display = 'block';
+                    addItemBtn.style.display = 'block';
                      activeCategoryIdForNewItem = firstCategoryCard.dataset.id;
                 } else if (addItemBtn) {
                     addItemBtn.style.display = 'none';
@@ -342,6 +374,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         imageUrl: imageUrlToSave || 'https://via.placeholder.com/60x60',
                         itemCount: 0
                     };
+                    // Check for duplicate category name before adding
+                    if (categories.some(cat => cat.name.toLowerCase() === categoryTitle.toLowerCase())) {
+                        alert(`Category with name "${categoryTitle}" already exists.`);
+                        return; // Stop form submission
+                    }
                     categories.push(newCategory);
                     alert(`Category "${categoryTitle}" added!`);
                     console.log(`admin-menu.js: New category added: ${categoryTitle}`);
@@ -349,12 +386,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     const categoryIndex = categories.findIndex(cat => cat.id === editingCategoryId);
                     if (categoryIndex !== -1) {
                         const categoryToUpdate = categories[categoryIndex];
+                        // Check for duplicate name if name changed and it's not the current category
+                        if (categoryToUpdate.name.toLowerCase() !== categoryTitle.toLowerCase() && categories.some(cat => cat.name.toLowerCase() === categoryTitle.toLowerCase())) {
+                            alert(`Category with name "${categoryTitle}" already exists.`);
+                            return; // Stop form submission
+                        }
                         categoryToUpdate.name = categoryTitle;
                         if (imageUrlToSave) {
                             categoryToUpdate.imageUrl = imageUrlToSave;
-                        } else if (categoryImageInput?.value === '') {
+                        } else if (categoryImageInput?.value === '' && categoryToUpdate.imageUrl !== 'https://via.placeholder.com/60x60') {
+                            // If user cleared image input and it's not already a placeholder, revert to placeholder
                             categoryToUpdate.imageUrl = 'https://via.placeholder.com/60x60';
                         }
+                        // Also update category name in menuItems for existing items if the category name changed
+                        menuItems.forEach(item => {
+                            if (item.categoryId === categoryToUpdate.id) {
+                                item.categoryName = categoryTitle;
+                            }
+                        });
+
                         alert(`Category "${categoryTitle}" updated!`);
                         console.log(`admin-menu.js: Category updated: ${categoryTitle}`);
                     }
@@ -376,9 +426,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 if (currentCategoryModalMode === 'edit' && editingCategoryId) {
                     const categoryToUpdate = categories.find(cat => cat.id === editingCategoryId);
+                    // Pass current image URL if no new file, but handle clearing image if input is empty
                     processCategoryData(categoryToUpdate ? categoryToUpdate.imageUrl : null);
                 } else {
-                    processCategoryData(null);
+                    processCategoryData(null); // No image, use default placeholder
                 }
             }
         });
@@ -417,6 +468,20 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const parsedItems = JSON.parse(storedItems);
                 menuItems = Array.isArray(parsedItems) ? parsedItems : [];
+                // MODIFIED: Migrate old item data structure to new 'sizes' array if needed
+                menuItems = menuItems.map(item => {
+                    if (!item.sizes && (item.size || item.price)) {
+                        console.warn(`admin-menu.js: Migrating old item structure for item: ${item.name}`);
+                        return {
+                            ...item,
+                            sizes: [{ size: item.size || 'Default', price: item.price || 0 }],
+                            // Remove old size and price properties
+                            size: undefined,
+                            price: undefined
+                        };
+                    }
+                    return item;
+                });
                 console.log("admin-menu.js: Menu items loaded:", menuItems);
             } catch (e) {
                 console.error("admin-menu.js: Error parsing menu items from Local Storage:", e);
@@ -424,11 +489,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             console.log("admin-menu.js: No menu items found in Local Storage. Initializing defaults.");
+            // NEW DEFAULT MENU ITEMS with sizes array
             menuItems = [
-                { id: 'item1', name: 'Jollof Rice', categoryId: 'main-dishes', categoryName: 'Main Dishes', size: 'Medium', price: 2500, prepTime: 30, imageUrl: 'https://via.placeholder.com/50', status: 'Available' },
-                { id: 'item2', name: 'Chicken & Chips', categoryId: 'main-dishes', categoryName: 'Main Dishes', size: 'Large', price: 3500, prepTime: 25, imageUrl: 'https://via.placeholder.com/50', status: 'Unavailable' },
-                { id: 'item3', name: 'Coca-Cola', categoryId: 'drinks', categoryName: 'Drinks', size: '35cl', price: 500, prepTime: 2, imageUrl: 'https://via.placeholder.com/50', status: 'Available' },
-                { id: 'item4', name: 'Chocolate Cake', categoryId: 'desserts', categoryName: 'Desserts', size: 'Slice', price: 1200, prepTime: 10, imageUrl: 'https://via.placeholder.com/50', status: 'Available' }
+                { id: 'item1', name: 'Jollof Rice', categoryId: 'main-dishes', categoryName: 'Main Dishes', sizes: [{ size: 'Medium', price: 2500 }, { size: 'Large', price: 3500 }], prepTime: 30, imageUrl: 'https://via.placeholder.com/50', status: 'Available' },
+                { id: 'item2', name: 'Chicken & Chips', categoryId: 'main-dishes', categoryName: 'Main Dishes', sizes: [{ size: 'Full', price: 3500 }], prepTime: 25, imageUrl: 'https://via.placeholder.com/50', status: 'Unavailable' },
+                { id: 'item3', name: 'Coca-Cola', categoryId: 'drinks', categoryName: 'Drinks', sizes: [{ size: '35cl', price: 500 }, { size: '50cl', price: 700 }], prepTime: 2, imageUrl: 'https://via.placeholder.com/50', status: 'Available' },
+                { id: 'item4', name: 'Chocolate Cake', categoryId: 'desserts', categoryName: 'Desserts', sizes: [{ size: 'Slice', price: 1200 }, { size: 'Half Cake', price: 5000 }], prepTime: 10, imageUrl: 'https://via.placeholder.com/50', status: 'Available' }
             ];
             saveMenuItemsToLocalStorage();
         }
@@ -441,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("admin-menu.js: Menu items saved to Local Storage.");
     }
 
-    // Render menu items to the table
+    // Render menu items to the table - MODIFIED to display multiple sizes/prices
     const menuItemsTableBody = document.querySelector('.menu-items-table tbody');
 
     function renderMenuItems(categoryId = 'all') {
@@ -467,12 +533,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = document.createElement('tr');
             row.dataset.id = item.id;
 
+            // MODIFIED: Generate HTML for sizes and prices
+            const sizesHtml = item.sizes && item.sizes.length > 0
+                ? item.sizes.map(sizeObj => `
+                    <span class="item-size-display">${sizeObj.size}: ₦${sizeObj.price ? sizeObj.price.toLocaleString() : '0'}</span>
+                `).join('<br>')
+                : 'N/A'; // Fallback if sizes array is empty or missing
+
             row.innerHTML = `
                 <td>${index + 1}</td>
                 <td>${item.name}</td>
-                <td>${item.size || 'N/A'}</td>
-                <td>₦${item.price ? item.price.toLocaleString() : '0'}</td>
-                <td>${item.prepTime ? item.prepTime + ' min' : 'N/A'}</td>
+                <td>${item.categoryName || categories.find(cat => cat.id === item.categoryId)?.name || 'N/A'}</td>
+                <td>${sizesHtml}</td> <td>${item.prepTime ? item.prepTime + ' min' : 'N/A'}</td>
                 <td><img src="${item.imageUrl || 'https://via.placeholder.com/50'}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;"></td>
                 <td>${item.status || 'N/A'}</td>
                 <td>
@@ -507,8 +579,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addItemModalTitle = document.querySelector('#addItemModal h2');
     const addItemModalSubmitButton = document.getElementById('modalSubmitButton');
     const itemNameInput = document.getElementById('itemName');
-    const itemSizeInput = document.getElementById('itemSize');
-    const itemPriceInput = document.getElementById('itemPrice');
+    // REMOVED: itemSizeInput, itemPriceInput as they are replaced by dynamic inputs
     const itemPrepTimeInput = document.getElementById('itemPrepTime');
     const itemStatusInput = document.getElementById('itemStatus');
     const itemImageInput = document.getElementById('itemImage');
@@ -516,24 +587,62 @@ document.addEventListener('DOMContentLoaded', () => {
     const addItemForm = document.getElementById('addItemForm');
 
 
+    // MODIFIED: setAddItemModalMode to handle sizes - MERGED
     function setAddItemModalMode(mode, itemData = null) {
         currentAddItemModalMode = mode;
+        addItemForm.reset(); // Clear form
+        itemImagePreview.src = '#';
+        itemImagePreview.style.display = 'none';
+
+        // Clear existing size/price inputs and add one default for 'add' mode or if no sizes for 'edit'
+        itemSizesContainer.innerHTML = `
+            <div class="size-price-input" data-size-id="1">
+                <input type="text" class="itemSize" placeholder="Size (e.g., Small)" required>
+                <input type="number" class="itemPrice" placeholder="Price ($)" step="0.01" required>
+                <button type="button" class="remove-size-btn"><i class="fas fa-times-circle"></i></button>
+            </div>
+        `;
+        sizeCounter = 1; // Reset size counter for new or default setup
+
         if (mode === 'add') {
             if (addItemModalTitle) addItemModalTitle.textContent = 'Add New Item';
             if (addItemModalSubmitButton) addItemModalSubmitButton.textContent = 'Add Item';
-            if (addItemForm) addItemForm.reset();
-            if (itemImagePreview) itemImagePreview.style.display = 'none';
-            if (itemImagePreview) itemImagePreview.src = '#';
             editingItemId = null;
             console.log("admin-menu.js: Add Item modal set to 'add' mode.");
         } else if (mode === 'edit' && itemData) {
             if (addItemModalTitle) addItemModalTitle.textContent = 'Edit Item';
             if (addItemModalSubmitButton) addItemModalSubmitButton.textContent = 'Update Item';
             if (itemNameInput) itemNameInput.value = itemData.name;
-            if (itemSizeInput) itemSizeInput.value = itemData.size || '';
-            if (itemPriceInput) itemPriceInput.value = itemData.price;
             if (itemPrepTimeInput) itemPrepTimeInput.value = itemData.prepTime || '';
             if (itemStatusInput) itemStatusInput.value = itemData.status;
+
+            // NEW: Populate sizes and prices for editing - MERGED
+            itemSizesContainer.innerHTML = ''; // Clear the single default input
+
+            if (itemData.sizes && itemData.sizes.length > 0) {
+                itemData.sizes.forEach((sizeObj, index) => {
+                    sizeCounter = index + 1; // Ensure sizeCounter is correct for new additions
+                    const sizeInputHtml = `
+                        <div class="size-price-input" data-size-id="${sizeCounter}">
+                            <input type="text" class="itemSize" placeholder="Size (e.g., Small)" value="${sizeObj.size}" required>
+                            <input type="number" class="itemPrice" placeholder="Price ($)" step="0.01" value="${sizeObj.price}" required>
+                            <button type="button" class="remove-size-btn"><i class="fas fa-times-circle"></i></button>
+                        </div>
+                    `;
+                    itemSizesContainer.insertAdjacentHTML('beforeend', sizeInputHtml);
+                });
+            } else {
+                // If an old item without 'sizes' (or empty sizes) is edited, add a default size/price input
+                itemSizesContainer.innerHTML = `
+                    <div class="size-price-input" data-size-id="1">
+                        <input type="text" class="itemSize" placeholder="Size (e.g., Small)" required>
+                        <input type="number" class="itemPrice" placeholder="Price ($)" step="0.01" required>
+                        <button type="button" class="remove-size-btn"><i class="fas fa-times-circle"></i></button>
+                    </div>
+                `;
+                sizeCounter = 1;
+                console.warn(`admin-menu.js: Item ${itemData.id} has no 'sizes' array. Added default size input.`);
+            }
 
             if (itemImagePreview) {
                 if (itemData.imageUrl && itemData.imageUrl !== 'https://via.placeholder.com/50') {
@@ -550,26 +659,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Add/Edit Item Form Submission
+    // Add/Edit Item Form Submission - MODIFIED to collect sizes array
     if (addItemForm) {
         addItemForm.addEventListener('submit', (event) => {
             event.preventDefault();
             console.log("admin-menu.js: Add/Edit Item Form submitted.");
 
             const name = itemNameInput?.value?.trim();
-            const size = itemSizeInput?.value?.trim();
-            const price = parseFloat(itemPriceInput?.value);
             const prepTime = parseInt(itemPrepTimeInput?.value);
             const status = itemStatusInput?.value;
             const imageFile = itemImageInput?.files?.[0];
 
-            if (!name || isNaN(price) || isNaN(prepTime) || !status) {
-                alert('Please fill in all required item fields correctly.');
+            // NEW: Collect all sizes and prices - MERGED
+            const sizes = [];
+            document.querySelectorAll('#itemSizesContainer .size-price-input').forEach(sizeDiv => {
+                const size = sizeDiv.querySelector('.itemSize').value.trim(); // Trim whitespace
+                const price = parseFloat(sizeDiv.querySelector('.itemPrice').value);
+                if (size && !isNaN(price)) { // Only add if size is not empty and price is a valid number
+                    sizes.push({ size: size, price: price });
+                }
+            });
+
+            if (!name || isNaN(prepTime) || !status) {
+                alert('Please fill in all required item fields correctly (Name, Prep Time, Status).');
                 return;
             }
-            if (price < 0 || prepTime < 0) {
-                 alert('Price and preparation time cannot be negative.');
-                 return;
+            if (sizes.length === 0) { // Check if at least one size/price pair is provided
+                alert("Please add at least one size and price for the item.");
+                return; // Stop form submission
+            }
+            if (prepTime < 0) { // Only prepTime can be validated as non-negative
+                alert('Preparation time cannot be negative.');
+                return;
             }
 
             const processItemSave = (imageUrlToSave) => {
@@ -577,7 +698,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 let categoryNameToUse;
 
                 if (currentAddItemModalMode === 'add') {
-                    // For new items, use the globally tracked active category ID
                     if (!activeCategoryIdForNewItem) {
                         alert("Error: No specific category selected for the new item. Please select a category before adding.");
                         closeModal(addItemModal);
@@ -590,12 +710,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         categoryNameToUse = 'Unknown Category'; // Fallback for display
                     }
                 } else if (currentAddItemModalMode === 'edit' && editingItemId) {
-                    // For existing items, retain their original category
                     const existingItem = menuItems.find(item => item.id === editingItemId);
-                    categoryIdToUse = existingItem ? existingItem.categoryId : 'all'; // Default to 'all' if category somehow lost
+                    categoryIdToUse = existingItem ? existingItem.categoryId : 'all';
                     categoryNameToUse = categories.find(cat => cat.id === categoryIdToUse)?.name || 'Unknown';
                 } else {
-                    // Fallback for unexpected modes (shouldn't happen)
                     categoryIdToUse = 'all';
                     categoryNameToUse = 'All Categories';
                 }
@@ -605,8 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     name: name,
                     categoryId: categoryIdToUse,
                     categoryName: categoryNameToUse,
-                    size: size,
-                    price: price,
+                    sizes: sizes, // MODIFIED: Store an array of objects for sizes and prices - MERGED
                     prepTime: prepTime,
                     imageUrl: imageUrlToSave || 'https://via.placeholder.com/50',
                     status: status
@@ -640,6 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 if (currentAddItemModalMode === 'edit' && editingItemId) {
                     const existingItem = menuItems.find(item => item.id === editingItemId);
+                    // Pass current image URL if no new file, but handle clearing image if input is empty
                     processItemSave(existingItem ? existingItem.imageUrl : null);
                 } else {
                     processItemSave(null);
@@ -669,7 +787,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
 
     // --- Event Delegation for Edit/Delete Icons (Items) ---
     if (menuItemsTableBody) {

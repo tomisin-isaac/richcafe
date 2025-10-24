@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Rich Cafe</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <div class="profile-container">
+        <header class="profile-header">
+            <a href="homepage.html" class="profile-back-btn"><i class="fas fa-arrow-left"></i></a>
+            <h1 class="profile-title">Profile</h1>
+        </header>
+
+        <div class="profile-picture-section">
+            <div class="profile-picture-wrapper">
+                <img src="images/default-avatar.png" alt="User Profile" class="profile-picture-img">
+                <label for="profile-image-upload" class="profile-edit-icon">
+                    <i class="fas fa-pen"></i>
+                </label>
+                <input type="file" id="profile-image-upload" class="profile-image-input" accept="image/*">
+            </div>
+            <h2 class="profile-username">Rich Cafe</h2>
+        </div>
+
+        <div class="profile-info">
+            <div class="profile-info-item">
+                <span class="profile-info-label">Name:</span>
+                <span class="profile-info-value profile-name">Rich Cafe</span>
+            </div>
+            <div class="profile-info-item">
+                <span class="profile-info-label">Email Address:</span>
+                <span class="profile-info-value profile-email">richcafe01@gmail.com</span>
+            </div>
+            <div class="profile-info-item">
+                <span class="profile-info-label">Phone Number:</span>
+                <span class="profile-info-value profile-phone">09084758493</span>
+            </div>
+        </div>
+        <button id="logout-btn" class="profile-logout-btn">Logout</button>
+    </div>
+
+    <nav class="partner-bottom-nav">
+        <a href="homepage.html" class="partner-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="partner.html" class="partner-nav-item "><i class="fas fa-handshake"></i><span>Partner</span></a>
+        <a href="#" class="partner-nav-item"><i class="fas fa-receipt"></i><span>Order</span></a>
+        <a href="support.html" class="partner-nav-item"><i class="fas fa-headset"></i><span>Support</span></a>
+        <a href="profile.html" class="partner-nav-item active"><i class="fas fa-user"></i><span>Profile</span></a>
+    </nav>
+
+    <script src="js/profile.js"></script>
+</body>
+</html>
