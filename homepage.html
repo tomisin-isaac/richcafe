@@ -1,70 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overview - Rich Cafe Homepage</title> 
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
-    <div class="user-dashboard-container">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Overview - Rich Cafe Homepage</title>
+		<link rel="stylesheet" href="css/style.css" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+		/>
+	</head>
+	<body>
+		<div class="user-dashboard-container">
+			<!-- Hero Section -->
+			<section class="user-dashboard-hero">
+				<p class="user-dashboard-subtitle">
+					Order Our Restaurant food, takeaway and Pizza.
+				</p>
+				<h1 class="user-dashboard-title">
+					Feast Your Senses, <span>Fast and Fresh</span>
+				</h1>
+				<p class="user-dashboard-desc">
+					Search For Your Craving And We Deliver
+				</p>
+				<div class="user-dashboard-search-bar">
+					<input
+						type="text"
+						placeholder="Food..."
+						class="user-dashboard-search-input"
+					/>
+					<button class="user-dashboard-search-btn">
+						<i class="fas fa-arrow-right"></i>
+					</button>
+				</div>
+			</section>
 
-        <!-- Hero Section -->
-        <section class="user-dashboard-hero">
-            <p class="user-dashboard-subtitle">Order Our Restaurant food, takeaway and Pizza.</p>
-            <h1 class="user-dashboard-title">
-                Feast Your Senses, <span>Fast and Fresh</span>
-            </h1>
-            <p class="user-dashboard-desc">Search For Your Craving And We Deliver</p>
-            <div class="user-dashboard-search-bar">
-                <input type="text" placeholder="Food..." class="user-dashboard-search-input">
-                <button class="user-dashboard-search-btn"><i class="fas fa-arrow-right"></i></button>
-            </div>
-        </section>
+			<!-- Categories -->
+			<section class="user-dashboard-categories">
+				<div class="user-dashboard-category-item">
+					<img src="images/rice.jpg" alt="Rice" />
+					<p>Rice</p>
+				</div>
+				<div class="user-dashboard-category-item">
+					<img src="images/spage.jpg" alt="Spage" />
+					<p>Spage</p>
+				</div>
+				<div class="user-dashboard-category-item">
+					<img src="images/shawarma.jpg" alt="Shawarma" />
+					<p>Shawarma</p>
+				</div>
+				<div class="user-dashboard-category-item">
+					<img src="images/burgers.jpg" alt="Burgers" />
+					<p>Burgers</p>
+				</div>
+				<div class="user-dashboard-category-item">
+					<img src="images/milkshake.jpg" alt="Milkshake" />
+					<p>Milkshake</p>
+				</div>
+			</section>
 
-        <!-- Categories -->
-        <section class="user-dashboard-categories">
-            <div class="user-dashboard-category-item">
-                <img src="images/rice.jpg" alt="Rice">
-                <p>Rice</p>
-            </div>
-            <div class="user-dashboard-category-item">
-                <img src="images/spage.jpg" alt="Spage">
-                <p>Spage</p>
-            </div>
-            <div class="user-dashboard-category-item">
-                <img src="images/shawarma.jpg" alt="Shawarma">
-                <p>Shawarma</p>
-            </div>
-            <div class="user-dashboard-category-item">
-                <img src="images/burgers.jpg" alt="Burgers">
-                <p>Burgers</p>
-            </div>
-            <div class="user-dashboard-category-item">
-                <img src="images/milkshake.jpg" alt="Milkshake">
-                <p>Milkshake</p>
-            </div>
-        </section>
+			<!-- Available Food -->
+			<section class="user-dashboard-available">
+				<h2>Available Food</h2>
+				<div class="user-dashboard-food-grid"></div>
+			</section>
 
-        <!-- Available Food -->
-        <section class="user-dashboard-available">
-            <h2>Available Food</h2>
-            <div class="user-dashboard-food-grid"></div>
-        </section>
+			<!-- Bottom Navigation -->
+			<nav class="user-dashboard-bottom-nav">
+				<a href="homepage.html" class="active"
+					><i class="fas fa-home"></i><span>Home</span></a
+				>
+				<a href="partner.html"
+					><i class="fas fa-handshake"></i><span>Partner</span></a
+				>
+				<a href="#"><i class="fas fa-receipt"></i><span>Order</span></a>
+				<a href="support.html"
+					><i class="fas fa-headset"></i><span>Support</span></a
+				>
+				<a href="profile.html"
+					><i class="fas fa-user"></i><span>Profile</span></a
+				>
+			</nav>
+		</div>
 
-        <!-- Bottom Navigation -->
-        <nav class="user-dashboard-bottom-nav">
-            <a href="homepage.html" class="active"><i class="fas fa-home"></i><span>Home</span></a>
-            <a href="partner.html"><i class="fas fa-handshake"></i><span>Partner</span></a>
-            <a href="#"><i class="fas fa-receipt"></i><span>Order</span></a>
-            <a href="support.html"><i class="fas fa-headset"></i><span>Support</span></a>
-            <a href="profile.html"><i class="fas fa-user"></i><span>Profile</span></a>
-        </nav>
-
-    </div>
-
-    <script src="js/user-homepage.js"></script>
-</body>
+		<script src="js/user-homepage.js"></script>
+	</body>
 </html>

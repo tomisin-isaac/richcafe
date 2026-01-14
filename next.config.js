@@ -9,6 +9,11 @@ const nextConfig = {
 				hostname: "easylearnapp.s3.amazonaws.com",
 				pathname: "/**",
 			},
+			{
+				protocol: "https",
+				hostname: "images.unsplash.com",
+				pathname: "/**",
+			},
 		],
 	},
 };

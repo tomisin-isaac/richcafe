@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import dbConnect from "../../../../utils/mongodb";
 import User from "../../../../models/User";
 import { publicUser } from "../../../../req-validators/auth";
+import { verifySession } from "../../../../utils/jwt";
 
 export const runtime = "nodejs";
 
 export async function GET(req) {
 	try {
 		const token = req.cookies.get("session")?.value;
+
 		if (!token)
 			return NextResponse.json(
 				{ ok: false, error: "UNAUTHORIZED" },
@@ -15,6 +17,7 @@ export async function GET(req) {
 			);
 
 		const payload = verifySession(token);
+
 		const userId = payload?.sub;
 		if (!userId)
 			return NextResponse.json(

@@ -1,30 +1,28 @@
 "use client";
 import Image from "next/image";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, ErrorMessage, Field } from "formik";
 import { signupSchema } from "../../../req-validators/auth";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import EyeIcon from "../../shared/icons/EyeIcon";
-import { loginSchema } from "../../../req-validators/auth";
-import { useSearchParams } from "next/navigation";
-export default function LoginPage() {
+import { useRouter } from "next/navigation";
+
+export default function SignupPage() {
 	const [showPassword, setShowPassword] = useState(false);
 	const router = useRouter();
 	const [errorMessage, setErrorMessage] = useState("");
 	const [successMessage, setSuccessMessage] = useState("");
-	const searchParams = useSearchParams();
-	const nextUrl = searchParams.get("next");
 
 	const initialValues = {
+		name: "",
 		email: "",
+		phone: "",
 		password: "",
 	};
 
 	const submitHandler = async (values) => {
 		try {
-			setErrorMessage("");
-			const request = await fetch(`/api/auth/login`, {
+			const request = await fetch(`/api/auth/signup`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -38,10 +36,10 @@ export default function LoginPage() {
 				throw new Error(response.error);
 			}
 
-			setSuccessMessage("You have been logged in successfuly.");
+			setSuccessMessage("You have been successfuly signed up.");
 
 			setTimeout(() => {
-				router.replace(nextUrl ?? "/");
+				router.replace("/");
 			}, 1000);
 		} catch (error) {
 			setErrorMessage(error.message);
@@ -66,12 +64,26 @@ export default function LoginPage() {
 			</div>
 
 			<Formik
-				initialValues={initialValues}
 				onSubmit={submitHandler}
-				validationSchema={loginSchema}>
+				initialValues={initialValues}
+				validationSchema={signupSchema}>
 				{({ isSubmitting }) => (
 					<Form id="registrationForm" className="form-card">
-						<h2>Register or Login</h2>
+						<h2>Signup</h2>
+						<div className="input-group">
+							<label htmlFor="userName">Full Name:</label>
+							<Field
+								type="text"
+								id="userName"
+								name="name"
+								placeholder="Enter your full name"
+							/>
+							<ErrorMessage
+								component={"p"}
+								name="name"
+								className="text-xl text-red-500 mt-2"
+							/>
+						</div>
 						<div className="input-group">
 							<label htmlFor="email">Email:</label>
 							<Field
@@ -83,6 +95,22 @@ export default function LoginPage() {
 							<ErrorMessage
 								component={"p"}
 								name="email"
+								className="text-xl text-red-500 mt-2"
+							/>
+						</div>
+						<div className="input-group phone-input-group">
+							<label htmlFor="phoneNumber">Phone Number:</label>
+							<div className="phone-input-fields">
+								<Field
+									type="tel"
+									id="phoneNumber"
+									name="phone"
+									placeholder="e.g., 08012345678"
+								/>
+							</div>
+							<ErrorMessage
+								component={"p"}
+								name="phone"
 								className="text-xl text-red-500 mt-2"
 							/>
 						</div>
@@ -132,7 +160,7 @@ export default function LoginPage() {
 
 			<div className="admin-login-link">
 				<p>
-					Don't have an account? <Link href="/auth/signup">Signup here</Link>
+					Already have an account? <Link href="/auth/login">Login here</Link>
 				</p>
 			</div>
 		</div>

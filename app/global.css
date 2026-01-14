@@ -317,6 +317,24 @@ p {
 	gap: 1rem;
 }
 
+.phone-input-fields-password {
+	display: flex;
+	gap: 1rem;
+	border: 0.1rem solid var(--border-color);
+	color: var(--input-text-light); /* From updated CSS */
+	background-color: var(--input-bg-light); /* From updated CSS */
+	transition: border-color 0.3s ease, box-shadow 0.3s ease,
+		background-color 0.3s ease, color 0.3s ease;
+	overflow: hidden;
+	padding: 1.4rem 1.8rem;
+}
+
+.phone-input-fields-password:focus-within {
+	border-color: var(--primary-color);
+	outline: none;
+	box-shadow: 0 0 0 0.4rem rgba(40, 167, 69, 0.2); /* Using primary color */
+}
+
 .phone-input-group select {
 	flex: 0 0 auto;
 	width: auto;
@@ -2769,20 +2787,7 @@ body.dark-mode .menu-items-table .delete-btn:hover {
 }
 
 .user-dashboard-category-item {
-	flex: 0 0 auto;
 	text-align: center;
-}
-
-.user-dashboard-category-item img {
-	width: 5rem;
-	height: 5rem;
-	object-fit: cover;
-	border-radius: 50%;
-}
-
-.user-dashboard-category-item p {
-	font-size: 1.2rem;
-	margin-top: 0.5rem;
 }
 
 /* Available Food */

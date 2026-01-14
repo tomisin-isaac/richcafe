@@ -2,9 +2,9 @@ import * as yup from "yup";
 
 export const signupSchema = yup
 	.object({
-		name: yup.string().trim().default(""),
+		name: yup.string().trim().required(),
 		email: yup.string().trim().lowercase().email().required(),
-		phone: yup.string().trim().required(),
+		phone: yup.string().trim().min(11).max(11).required(),
 		password: yup.string().min(6).required(),
 	})
 	.noUnknown(true);
