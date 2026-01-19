@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 
-const AUTH_PAGES = new Set(["/auth/login", "/auth/signup"]);
+const USER_AUTH_PAGES = new Set(["/auth/login", "/auth/signup"]);
+const ADMIN_AUTH_PAGES = new Set(["/auth/admin/login", "/auth/admin/signup"]);
 
-async function isAuthenticated(request) {
-	// Call your existing endpoint as the source of truth.
-	const url = new URL("/api/auth/me", request.url);
+function isAdminPath(pathname) {
+	return pathname === "/admin" || pathname.startsWith("/admin/");
+}
 
-	// IMPORTANT: when calling fetch from the server/proxy, cookies are NOT auto-forwarded
-	// unless you pass them through. So we forward the Cookie header from the incoming request.
+async function checkAuth(request, endpointPath) {
+	const url = new URL(endpointPath, request.url);
 	const cookie = request.headers.get("cookie") ?? "";
 
 	const res = await fetch(url, {
@@ -16,17 +17,40 @@ async function isAuthenticated(request) {
 		cache: "no-store",
 	});
 
-	return res.ok; // 200 => authenticated, 401 => not authenticated
+	return res.ok;
 }
 
 export async function proxy(request) {
 	const { pathname, search } = request.nextUrl;
 
-	const isAuthPage = AUTH_PAGES.has(pathname);
-	const authed = await isAuthenticated(request);
+	// -------- Admin flow --------
+	if (isAdminPath(pathname) || ADMIN_AUTH_PAGES.has(pathname)) {
+		const adminAuthed = await checkAuth(request, "/api/admin/auth/me");
+
+		// If not authed and trying to access any admin page except admin auth pages => send to admin login
+		if (!adminAuthed && !ADMIN_AUTH_PAGES.has(pathname)) {
+			const loginUrl = request.nextUrl.clone();
+			loginUrl.pathname = "/auth/admin/login";
+			loginUrl.searchParams.set("next", pathname + search);
+			return NextResponse.redirect(loginUrl);
+		}
+
+		// If authed and trying to access admin login/signup => send to /admin
+		if (adminAuthed && ADMIN_AUTH_PAGES.has(pathname)) {
+			const adminHome = request.nextUrl.clone();
+			adminHome.pathname = "/admin";
+			adminHome.search = "";
+			return NextResponse.redirect(adminHome);
+		}
+
+		return NextResponse.next();
+	}
+
+	// -------- User flow --------
+	const userAuthed = await checkAuth(request, "/api/auth/me");
 
 	// Not authed and trying to access any non-auth page => send to login
-	if (!authed && !isAuthPage) {
+	if (!userAuthed && !USER_AUTH_PAGES.has(pathname)) {
 		const loginUrl = request.nextUrl.clone();
 		loginUrl.pathname = "/auth/login";
 		loginUrl.searchParams.set("next", pathname + search);
@@ -34,7 +58,7 @@ export async function proxy(request) {
 	}
 
 	// Authed but trying to access login/signup => send home
-	if (authed && isAuthPage) {
+	if (userAuthed && USER_AUTH_PAGES.has(pathname)) {
 		const homeUrl = request.nextUrl.clone();
 		homeUrl.pathname = "/";
 		homeUrl.search = "";

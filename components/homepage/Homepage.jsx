@@ -1,8 +1,62 @@
 "use client";
 import Image from "next/image";
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import Link from "next/link";
+import { useRootStore } from "../shared/providers/RootProvider";
 
 export default function Homepage() {
+	const [search, setSearch] = useState("");
+	const [category, setCategory] = useState("");
+	const { setState } = useRootStore();
+
+	const { data: categories, isFetching: categoriesLoading } = useQuery({
+		queryKey: ["categories"],
+		queryFn: async () => {
+			const request = await fetch(`/api/customer/category`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			const response = await request.json();
+
+			if (!request.ok) {
+				throw new Error(response.error);
+			}
+
+			return response.categories;
+		},
+		gcTime: 0,
+	});
+
+	const { data: products, isFetching: productsLoading } = useQuery({
+		queryKey: ["products", search, category],
+		queryFn: async () => {
+			const request = await fetch(
+				`/api/admin/products?q=${search}&category=${category}`,
+				{
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+
+			const response = await request.json();
+
+			if (!request.ok) {
+				throw new Error(response.error);
+			}
+
+			return response.products;
+		},
+		gcTime: 0,
+		enabled: categories !== undefined,
+	});
+
 	return (
 		<div className="user-dashboard-container">
 			<section className="user-dashboard-hero">
@@ -20,99 +74,106 @@ export default function Homepage() {
 						type="text"
 						placeholder="Food..."
 						className="user-dashboard-search-input"
+						onChange={(e) => {
+							setSearch(e.target.value);
+						}}
 					/>
-					<button className="user-dashboard-search-btn">
+					<button className="user-dashboard-search-btn !shrink-0 w-[] !rounded-full">
 						<i className="fas fa-arrow-right"></i>
 					</button>
 				</div>
 			</section>
-			<section className="user-dashboard-categories">
-				<div className="user-dashboard-category-item flex items-center justify-center w-max rounded-full bg-[#eaeaea] px-[6px] py-[6px]">
-					<p className="!m-0 text-xl">Rice</p>
+			<section className="user-dashboard-categories !w-full !overflow-auto">
+				<div className="user-dashboard-category-item flex flex-col items-center shrink-0">
+					<Image
+						src={"/all.jpg"}
+						width={60}
+						height={60}
+						alt=""
+						onClick={() => {
+							setCategory("");
+						}}
+						unoptimized
+						className={`${
+							category === "" ? "!border-[#28a745] border-[3px]" : ""
+						} w-[60px] h-[60px] rounded-full object-cover cursor-pointer`}
+					/>
+					<p className="text-xl shrink-0">All Categories</p>
 				</div>
-				<div className="user-dashboard-category-item flex items-center justify-center w-max rounded-full bg-[#eaeaea] px-[6px] py-[6px]">
-					<p className="!m-0 text-xl">Spage</p>
-				</div>
-				<div className="user-dashboard-category-item flex items-center justify-center w-max rounded-full bg-[#eaeaea] px-[6px] py-[6px]">
-					<p className="!m-0 text-xl">Shawarma</p>
-				</div>
-				<div className="user-dashboard-category-item flex items-center justify-center w-max rounded-full bg-[#eaeaea] px-[6px] py-[6px]">
-					<p className="!m-0 text-xl">Burgers</p>
-				</div>
-				<div className="user-dashboard-category-item flex items-center justify-center w-max rounded-full bg-[#eaeaea] px-[6px] py-[6px]">
-					<p className="!m-0 text-xl">Milkshake</p>
-				</div>
+				{categoriesLoading &&
+					Array(5)
+						.fill("")
+						.map((d, i) => (
+							<div
+								key={i}
+								className="w-[60px] h-[60px] bg-[#d3d3d3] animate-pulse rounded-full"></div>
+						))}
+				{!categoriesLoading &&
+					categories &&
+					categories.map((c) => (
+						<div
+							key={c._id}
+							className={`user-dashboard-category-item flex flex-col items-center shrink-0 `}>
+							<Image
+								src={c.image}
+								width={60}
+								height={60}
+								alt=""
+								onClick={() => {
+									setCategory(c._id);
+								}}
+								className={`w-[60px] h-[60px] rounded-full object-cover cursor-pointer ${
+									category === c._id ? "!border-[#28a745] border-[3px]" : ""
+								}`}
+							/>
+							<p className="text-xl">{c.name}</p>
+						</div>
+					))}
 			</section>
 			<section className="user-dashboard-available !py-0">
 				<h2>Available Food</h2>
 				<div className="user-dashboard-food-grid">
-					<div className="user-dashboard-food-card-content">
-						<div className="user-dashboard-food-img">
-							<Image
-								src={
-									"https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6"
-								}
-								className="h-full w-full object-cover"
-								width={400}
-								height={200}
-								alt="jsjs"
-								unoptimized
-							/>
-						</div>
-						<div className="user-dashboard-food-info">
-							<div className="user-dashboard-food-details">
-								<h3>Rice</h3>
-								<span className="user-dashboard-food-price">5,000</span>
-							</div>
-							<p>Preparation Time | 2 min</p>
-						</div>
-					</div>
-					<div className="user-dashboard-food-card-content">
-						<div className="user-dashboard-food-img">
-							<Image
-								src={
-									"https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6"
-								}
-								className="h-full w-full object-cover"
-								width={400}
-								height={200}
-								alt="jsjs"
-								unoptimized
-							/>
-						</div>
-						<div className="user-dashboard-food-info">
-							<div className="user-dashboard-food-details">
-								<h3>Rice</h3>
-								<span className="user-dashboard-food-price">5,000</span>
-							</div>
-							<p>Preparation Time | 2 min</p>
-						</div>
-					</div>
+					{(productsLoading || !products) &&
+						Array(5)
+							.fill("")
+							.map((d, i) => (
+								<div
+									key={i}
+									className="h-[200px] bg-[#d3d3d3] animate-pulse rounded-lg"></div>
+							))}
+					{!productsLoading &&
+						products &&
+						products.map((product, i) => (
+							<Link
+								onClick={() => {
+									setState({ currentProduct: product });
+								}}
+								href={`/product-details?p=${product._id}`}
+								key={i}
+								className="user-dashboard-food-card-content">
+								<div className="user-dashboard-food-img">
+									<Image
+										src={product.images[0]}
+										className="h-full w-full object-cover"
+										width={400}
+										height={200}
+										alt="jsjs"
+										unoptimized
+									/>
+								</div>
+								<div className="user-dashboard-food-info">
+									<div className="user-dashboard-food-details">
+										<h3>{product.name}</h3>
+										<span className="user-dashboard-food-price">
+											from ₦{product.sizes[0].price.toLocaleString()}
+										</span>
+									</div>
+									<p>Preparation Time | {product.preparationTimeMinutes} min</p>
+								</div>
+							</Link>
+						))}
 				</div>
 			</section>
-
-			<nav className="user-dashboard-bottom-nav">
-				<a href="homepage.html" className="active">
-					<i className="fas fa-home"></i>
-					<span>Home</span>
-				</a>
-				<a href="partner.html">
-					<i className="fas fa-handshake"></i>
-					<span>Partner</span>
-				</a>
-				<a href="#">
-					<i className="fas fa-receipt"></i>
-					<span>Order</span>
-				</a>
-				<a href="support.html">
-					<i className="fas fa-headset"></i>
-					<span>Support</span>
-				</a>
-				<a href="profile.html">
-					<i className="fas fa-user"></i>
-					<span>Profile</span>
-				</a>
-			</nav>
 		</div>
 	);
 }

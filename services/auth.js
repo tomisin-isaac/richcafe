@@ -1,6 +1,6 @@
 import dbConnect from "../utils/mongodb";
 import { hashPassword, verifyPassword } from "../utils/password";
-import { signSession } from "../utils/jwt";
+import { signSession, verifySession } from "../utils/jwt";
 import { publicUser } from "../req-validators/auth";
 import User from "../models/User";
 
@@ -59,4 +59,35 @@ export async function loginService({ email, password }) {
 	const token = signSession({ userId: user._id });
 
 	return { user: publicUser(user), token };
+}
+
+export async function getUserFromRequestCookie(token) {
+	if (!token) return null;
+
+	let payload;
+	try {
+		payload = verifySession(token);
+	} catch {
+		return null;
+	}
+
+	if (!payload?.sub) return null;
+
+	await dbConnect();
+	const user = await User.findById(payload.sub);
+
+	return publicUser(user);
+}
+
+export async function requireUser(req) {
+	const token = req.cookies.get("session")?.value;
+	const user = await getUserFromRequestCookie(token);
+
+	if (!user) {
+		const err = new Error("UNAUTHORIZED");
+		err.status = 401;
+		throw err;
+	}
+
+	return user;
 }

@@ -12,3 +12,16 @@ export function verifySession(token) {
 	if (!JWT_SECRET) throw new Error("Missing JWT_SECRET");
 	return jwt.verify(token, JWT_SECRET); // throws if invalid/expired
 }
+
+export function signAdminSession({ adminId }) {
+	if (!JWT_SECRET) throw new Error("Missing JWT_SECRET");
+
+	return jwt.sign({ sub: String(adminId), typ: "admin" }, JWT_SECRET, {
+		expiresIn: "30d",
+	});
+}
+
+export function verifyAdminSession(token) {
+	if (!JWT_SECRET) throw new Error("Missing JWT_SECRET");
+	return jwt.verify(token, JWT_SECRET); // throws if invalid/expired
+}

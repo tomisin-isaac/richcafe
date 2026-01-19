@@ -1,122 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Product Details - Rich Cafe</title>
-<link rel="stylesheet" href="css/style.css" />
-<link rel="stylesheet" href="css/product-details.css" />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-</head>
-<body>
-    <div class="product-container">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Product Details - Rich Cafe</title>
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/product-details.css" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+		/>
+	</head>
+	<body>
+		<div class="product-container">
+			<!-- Header / Breadcrumb -->
+			<header class="product-header">
+				<button
+					class="product-back-btn"
+					id="productBackBtn"
+					aria-label="Go back"
+				>
+					<i class="fas fa-arrow-left"></i>
+				</button>
+				<h1 class="product-title" id="productCategoryTitle">Category</h1>
+			</header>
 
-        <!-- Header / Breadcrumb -->
-        <header class="product-header">
-        <button class="product-back-btn" id="productBackBtn" aria-label="Go back">
-            <i class="fas fa-arrow-left"></i>
-        </button>
-        <h1 class="product-title" id="productCategoryTitle">Category</h1>
-        </header>
+			<!-- Meta Summary -->
+			<section class="product-meta">
+				<div class="product-meta-item">
+					<p class="product-meta-label">Preparation Time</p>
+					<p class="product-meta-value" id="productPrepTime">—</p>
+				</div>
+				<div class="product-meta-item">
+					<p class="product-meta-label">Delivery Time</p>
+					<p class="product-meta-value">5 - 10 mins</p>
+				</div>
+				<div class="product-meta-item">
+					<p class="product-meta-label">Available Delivery Type</p>
+					<p class="product-meta-value">Instant Delivery</p>
+				</div>
+			</section>
 
-        <!-- Meta Summary -->
-        <section class="product-meta">
-        <div class="product-meta-item">
-            <p class="product-meta-label">Preparation Time</p>
-            <p class="product-meta-value" id="productPrepTime">—</p>
-        </div>
-        <div class="product-meta-item">
-            <p class="product-meta-label">Delivery Time</p>
-            <p class="product-meta-value">5 - 10 mins</p>
-        </div>
-        <div class="product-meta-item">
-            <p class="product-meta-label">Available Delivery Type</p>
-            <p class="product-meta-value">Instant Delivery</p>
-        </div>
-        </section>
+			<!-- Selected Item -->
+			<section class="product-selected" id="productSelected">
+				<!-- Populated by JS -->
+			</section>
 
-        <!-- Selected Item -->
-        <section class="product-selected" id="productSelected">
-        <!-- Populated by JS -->
-        </section>
+			<!-- Related Items -->
+			<section class="product-related">
+				<h2 class="product-related-title">More in this category</h2>
+				<div class="product-related-list" id="productRelatedList">
+					<!-- Populated by JS -->
+				</div>
+			</section>
+		</div>
 
-        <!-- Related Items -->
-        <section class="product-related">
-        <h2 class="product-related-title">More in this category</h2>
-        <div class="product-related-list" id="productRelatedList">
-            <!-- Populated by JS -->
-        </div>
-        </section>
+		<!-- Bottom Navigation -->
+		<nav class="partner-bottom-nav">
+			<a href="homepage.html" class="partner-nav-item active"
+				><i class="fas fa-home"></i><span>Home</span></a
+			>
+			<a href="partner.html" class="partner-nav-item"
+				><i class="fas fa-handshake"></i><span>Partner</span></a
+			>
+			<a href="#" class="partner-nav-item"
+				><i class="fas fa-receipt"></i><span>Order</span></a
+			>
+			<a href="#" class="partner-nav-item"
+				><i class="fas fa-headset"></i><span>Support</span></a
+			>
+			<a href="#" class="partner-nav-item"
+				><i class="fas fa-user"></i><span>Profile</span></a
+			>
+		</nav>
 
-    </div>
+		<!-- ===== Add to Order Modal (enhanced) ===== -->
+		<div id="addToOrderModal" class="modal-overlay hidden" aria-hidden="true">
+			<div
+				class="modal-content"
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="modalProductName"
+			>
+				<div class="modal-header">
+					<h3 id="modalProductName">Select Size</h3>
+					<button
+						id="modalCloseBtn"
+						class="modal-close"
+						aria-label="Close modal"
+					>
+						&times;
+					</button>
+				</div>
 
-    <!-- Bottom Navigation -->
-    <nav class="partner-bottom-nav">
-        <a href="homepage.html" class="partner-nav-item active"><i class="fas fa-home"></i><span>Home</span></a>
-        <a href="partner.html" class="partner-nav-item"><i class="fas fa-handshake"></i><span>Partner</span></a>
-        <a href="#" class="partner-nav-item"><i class="fas fa-receipt"></i><span>Order</span></a>
-        <a href="#" class="partner-nav-item"><i class="fas fa-headset"></i><span>Support</span></a>
-        <a href="#" class="partner-nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
-    </nav>
+				<div class="modal-body">
+					<!-- Selected product area -->
+					<div class="modal-selected">
+						<img id="modalProductImg" class="modal-product-img" src="" alt="" />
+						<div class="modal-selected-info">
+							<div id="modalSelectedSizes" class="modal-sizes-list"></div>
+							<div
+								id="modalSelectedAddNote"
+								style="font-size: 0.95rem; color: #666; margin-top: 0.5rem"
+							>
+								Choose size and click "Add" to include in order.
+							</div>
+						</div>
+					</div>
 
+					<hr
+						style="margin: 1rem 0; border: none; border-top: 1px solid #eee"
+					/>
 
+					<!-- Categories accordion (list view) -->
+					<section id="modalCategories" class="modal-categories">
+						<!-- Populated dynamically -->
+					</section>
 
-    <!-- ===== Add to Order Modal (enhanced) ===== -->
-    <div id="addToOrderModal" class="modal-overlay hidden" aria-hidden="true">
-        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalProductName">
-            <div class="modal-header">
-            <h3 id="modalProductName">Select Size</h3>
-            <button id="modalCloseBtn" class="modal-close" aria-label="Close modal">&times;</button>
-            </div>
+					<hr
+						style="margin: 1rem 0; border: none; border-top: 1px solid #eee"
+					/>
 
-            <div class="modal-body">
-            <!-- Selected product area -->
-            <div class="modal-selected">
-                <img id="modalProductImg" class="modal-product-img" src="" alt="">
-                <div class="modal-selected-info">
-                <div id="modalSelectedSizes" class="modal-sizes-list"></div>
-                <div id="modalSelectedAddNote" style="font-size:.95rem;color:#666;margin-top:.5rem;">Choose size and click "Add" to include in order.</div>
-                </div>
-            </div>
+					<!-- Cart preview inside modal -->
+					<section id="modalCartPreview" class="modal-cart-preview">
+						<h4 style="margin: 0 0 0.6rem 0; font-size: 1rem">Order Preview</h4>
+						<div id="modalCartList">
+							<!-- Populated dynamically -->
+							<p id="modalCartEmpty" style="color: #666; margin: 0.4rem 0">
+								No items added yet.
+							</p>
+						</div>
+					</section>
+				</div>
 
-            <hr style="margin:1rem 0; border: none; border-top:1px solid #eee;" />
+				<!-- Bottom controls: total + pay -->
+				<div class="modal-footer">
+					<div class="modal-footer-left" id="mainItemStepperWrap">
+						<!-- optional global/main stepper if needed -->
+					</div>
 
-            <!-- Categories accordion (list view) -->
-            <section id="modalCategories" class="modal-categories">
-                <!-- Populated dynamically -->
-            </section>
+					<div class="modal-footer-right">
+						<button id="modalPayBtn" class="modal-pay-btn">Pay ₦0</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
-            <hr style="margin:1rem 0; border: none; border-top:1px solid #eee;" />
+		<!-- ✅ Toast Notification -->
+		<div id="toast" class="toast hidden">Added to Order!</div>
 
-            <!-- Cart preview inside modal -->
-            <section id="modalCartPreview" class="modal-cart-preview">
-                <h4 style="margin:0 0 .6rem 0; font-size:1rem;">Order Preview</h4>
-                <div id="modalCartList">
-                <!-- Populated dynamically -->
-                <p id="modalCartEmpty" style="color:#666; margin:0.4rem 0;">No items added yet.</p>
-                </div>
-            </section>
-            </div>
-
-            <!-- Bottom controls: total + pay -->
-            <div class="modal-footer">
-            <div class="modal-footer-left" id="mainItemStepperWrap">
-                <!-- optional global/main stepper if needed -->
-            </div>
-
-            <div class="modal-footer-right">
-                <button id="modalPayBtn" class="modal-pay-btn">Pay ₦0</button>
-            </div>
-            </div>
-        </div>
-    </div>
-
-<!-- ✅ Toast Notification -->
-<div id="toast" class="toast hidden">Added to Order!</div>
-
-
-
-    <script src="js/product-details.js"></script>
-</body>
+		<script src="js/product-details.js"></script>
+	</body>
 </html>
