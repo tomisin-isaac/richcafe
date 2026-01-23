@@ -28,6 +28,7 @@ export function yupErrorToDetails(err) {
 export function publicUser(userDoc) {
 	return {
 		id: String(userDoc._id),
+		_id: String(userDoc._id),
 		name: userDoc.name ?? "",
 		email: userDoc.email,
 		phone: userDoc.phone,

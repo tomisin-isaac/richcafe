@@ -11,9 +11,9 @@ export default function ChevronIcon({ stroke = "#0F172A" }) {
 			<path
 				d="M19.5 8.25L12 15.75L4.5 8.25"
 				stroke={stroke}
-				stroke-width="1.5"
-				stroke-linecap="round"
-				stroke-linejoin="round"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+				strokeLinejoin="round"
 			/>
 		</svg>
 	);

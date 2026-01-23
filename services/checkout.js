@@ -133,7 +133,7 @@ export async function checkoutService({ user, locationId, hostelName }) {
 			cart_id: JSON.stringify({
 				order_id: orderId,
 				snapshot_id: String(orderSnapshot._id),
-				user_id: String(user._id),
+				user_id: String(user.id),
 				type: "ORDER_PAYMENT",
 			}),
 		},
@@ -161,7 +161,7 @@ export async function checkoutService({ user, locationId, hostelName }) {
 
 	const response = await request.json();
 
-	console.log(response, "llldc");
+	//console.log(response, "llldc");
 
 	// Paystack returns a reference we should store
 	const paystackRef = response?.data?.reference ?? null;
@@ -227,7 +227,6 @@ export async function verifyCheckoutService({ user, reference }) {
 	}
 
 	const verifyRes = await verifyResponse.json();
-
 	const paystackData = verifyRes?.data;
 
 	// Paystack API call success check
@@ -237,14 +236,13 @@ export async function verifyCheckoutService({ user, reference }) {
 		throw err;
 	}
 
-	// Transaction status must be success
 	if (paystackData.status !== "success") {
 		const err = new Error("PAYMENT_NOT_SUCCESSFUL");
 		err.status = 400;
 		throw err;
 	}
 
-	// 2) Find snapshot by reference (source of truth for order build)
+	// 2) Find snapshot by reference
 	const snapshot = await OrderSnapshot.findOne({ reference });
 	if (!snapshot) {
 		const err = new Error("ORDER_SNAPSHOT_NOT_FOUND");
@@ -253,9 +251,8 @@ export async function verifyCheckoutService({ user, reference }) {
 	}
 
 	// 3) Validate amount matches snapshot total
-	const paidAmountKobo = Number(paystackData.amount); // kobo
-	const expectedAmountKobo = toKobo(snapshot.pricing.total); // naira -> kobo
-
+	const paidAmountKobo = Number(paystackData.amount);
+	const expectedAmountKobo = toKobo(snapshot.pricing.total);
 	if (
 		!Number.isFinite(paidAmountKobo) ||
 		paidAmountKobo !== expectedAmountKobo
@@ -265,76 +262,148 @@ export async function verifyCheckoutService({ user, reference }) {
 		throw err;
 	}
 
-	// 4) Validate metadata (order_id, snapshot_id, user_id)
-	// Paystack may return metadata as object or string
+	// 4) Validate metadata
 	const metadata =
 		safeParseJson(paystackData.metadata) ?? paystackData.metadata ?? {};
-	const cartIdRaw = metadata?.cart_id; // you set this as JSON.stringify(...)
+	const cartIdRaw = metadata?.cart_id;
 	const cartId = safeParseJson(cartIdRaw);
-
 	if (!cartId) {
 		const err = new Error("INVALID_PAYMENT_METADATA");
 		err.status = 400;
 		throw err;
 	}
 
-	const metaOrderId = String(cartId.order_id || "");
-	const metaSnapshotId = String(cartId.snapshot_id || "");
-	const metaUserId = String(cartId.user_id || "");
+	if (String(cartId.order_id) !== String(snapshot.orderId))
+		throw new Error("ORDER_ID_MISMATCH");
+	if (String(cartId.snapshot_id) !== String(snapshot._id))
+		throw new Error("SNAPSHOT_ID_MISMATCH");
+	if (String(cartId.user_id) !== String(user.id))
+		throw new Error("USER_MISMATCH");
 
-	if (metaOrderId !== String(snapshot.orderId)) {
-		const err = new Error("ORDER_ID_MISMATCH");
-		err.status = 400;
-		throw err;
-	}
-
-	if (metaSnapshotId !== String(snapshot._id)) {
-		const err = new Error("SNAPSHOT_ID_MISMATCH");
-		err.status = 400;
-		throw err;
-	}
-
-	if (metaUserId !== String(user._id)) {
-		const err = new Error("USER_MISMATCH");
-		err.status = 403;
-		throw err;
-	}
-
-	// 5) Extra safety: ensure orderId not already used
-	const existingByOrderId = await Order.findOne({ orderId: snapshot.orderId });
-	if (existingByOrderId) {
-		return {
-			order: existingByOrderId,
-			paystack: paystackData,
-			alreadyProcessed: true,
-		};
-	}
-
-	// 6) Create Order from snapshot
-	const order = await Order.create({
-		orderId: snapshot.orderId,
-		user: snapshot.user,
-
-		locationId: snapshot.locationId,
-		location: snapshot.location,
-		hostelName: snapshot.hostelName,
-
-		items: snapshot.items,
-		pricing: snapshot.pricing,
-
-		reference,
-		status: "pending",
-	});
-
-	// 7) Clear cart (best effort)
-	await Cart.findOneAndUpdate(
-		{ user: user.id },
-		{ $set: { items: [], pricing: { subtotal: 0, total: 0 } } },
-		{ new: true }
+	// 5) Idempotent order creation using $setOnInsert + upsert
+	const result = await Order.updateOne(
+		{ orderId: snapshot.orderId },
+		{
+			$setOnInsert: {
+				orderId: snapshot.orderId,
+				user: snapshot.user,
+				locationId: snapshot.locationId,
+				location: snapshot.location,
+				hostelName: snapshot.hostelName,
+				items: snapshot.items,
+				pricing: snapshot.pricing,
+				reference,
+				status: "pending",
+			},
+		},
+		{ upsert: true }
 	);
 
-	// 8) Delete snapshot (optional; TTL exists anyway)
+	// Fetch the order after upsert
+	const order = await Order.findOne({ orderId: snapshot.orderId });
+	const alreadyProcessed = result.matchedCount > 0;
+
+	// 6) Clear cart (best effort)
+	await Cart.findOneAndUpdate(
+		{ user: user.id },
+		{ $set: { items: [], pricing: { subtotal: 0, total: 0 } } }
+	);
+
+	// 7) Delete snapshot (optional; TTL exists anyway)
 	await OrderSnapshot.deleteOne({ _id: snapshot._id });
 
-	return { order, paystack: paystackData, alreadyProcessed: false };
+	return { order, paystack: paystackData, alreadyProcessed };
+}
+
+export async function handlePaystackWebhookService({ event, data }) {
+	await dbConnect();
+
+	// Only care about successful charges
+	if (event !== "charge.success") {
+		return { ignored: true };
+	}
+
+	const reference = data?.reference;
+	if (!reference) throw new Error("REFERENCE_MISSING");
+
+	// 🔐 Re-verify with Paystack (never trust webhook blindly)
+	const verifyRes = await fetch(
+		`https://api.paystack.co/transaction/verify/${encodeURIComponent(
+			reference
+		)}`,
+		{
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${process.env.PayStack_SECRET_KEY}`,
+			},
+		}
+	);
+
+	if (!verifyRes.ok) {
+		const text = await verifyRes.text();
+		const err = new Error("PAYSTACK_VERIFY_FAILED");
+		err.details = text;
+		throw err;
+	}
+
+	const verifyData = await verifyRes.json();
+	const paystackData = verifyData?.data;
+
+	if (!paystackData || paystackData.status !== "success") {
+		throw new Error("PAYMENT_NOT_SUCCESSFUL");
+	}
+
+	// 1️⃣ Find snapshot
+	const snapshot = await OrderSnapshot.findOne({ reference });
+	if (!snapshot) throw new Error("ORDER_SNAPSHOT_NOT_FOUND");
+
+	// 2️⃣ Amount validation
+	const paidAmountKobo = Number(paystackData.amount);
+	const expectedAmountKobo = toKobo(snapshot.pricing.total);
+	if (paidAmountKobo !== expectedAmountKobo) throw new Error("AMOUNT_MISMATCH");
+
+	// 3️⃣ Metadata validation
+	const metadata =
+		safeParseJson(paystackData.metadata) ?? paystackData.metadata ?? {};
+	const cartIdRaw = metadata?.cart_id;
+	const cartId = safeParseJson(cartIdRaw);
+	if (!cartId) throw new Error("INVALID_METADATA");
+
+	if (String(cartId.order_id) !== String(snapshot.orderId))
+		throw new Error("ORDER_ID_MISMATCH");
+	if (String(cartId.snapshot_id) !== String(snapshot._id))
+		throw new Error("SNAPSHOT_ID_MISMATCH");
+
+	// 4️⃣ Idempotent order creation with $setOnInsert
+	const result = await Order.updateOne(
+		{ orderId: snapshot.orderId },
+		{
+			$setOnInsert: {
+				orderId: snapshot.orderId,
+				user: snapshot.user,
+				locationId: snapshot.locationId,
+				location: snapshot.location,
+				hostelName: snapshot.hostelName,
+				items: snapshot.items,
+				pricing: snapshot.pricing,
+				reference,
+				status: "pending",
+			},
+		},
+		{ upsert: true }
+	);
+
+	const order = await Order.findOne({ orderId: snapshot.orderId });
+	const alreadyProcessed = result.matchedCount > 0;
+
+	// 5️⃣ Clear cart (best effort)
+	await Cart.findOneAndUpdate(
+		{ user: snapshot.user },
+		{ $set: { items: [], pricing: { subtotal: 0, total: 0 } } }
+	);
+
+	// 6️⃣ Delete snapshot (optional; TTL exists anyway)
+	await OrderSnapshot.deleteOne({ _id: snapshot._id });
+
+	return { order, alreadyProcessed };
 }

@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Chart from "chart.js/auto";
 import StackedOrderImages from "../orders/StackedOrderImages";
+import { AnimatePresence, motion } from "framer-motion";
+import OrderDetails from "../orders/OrderDetails";
 
 export default function AdminOverview() {
 	const salesCanvasRef = useRef(null);
@@ -12,6 +14,8 @@ export default function AdminOverview() {
 	const orderChart = useRef(null);
 	const [salesTF, setSalesTF] = useState("weekly");
 	const [orderTF, setOrderTF] = useState("this_month");
+
+	const [viewOrder, setViewOrder] = useState(null);
 
 	const { data, isFetching, refetch } = useQuery({
 		queryKey: ["overview", salesTF, orderTF],
@@ -242,6 +246,22 @@ export default function AdminOverview() {
 
 	return (
 		<>
+			<AnimatePresence>
+				{viewOrder && (
+					<motion.div
+						className="w-max h-max"
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}>
+						<OrderDetails
+							close={() => {
+								setViewOrder(null);
+							}}
+							item={viewOrder}
+						/>
+					</motion.div>
+				)}
+			</AnimatePresence>
 			<header className="dashboard-header">
 				<div className="header-left">
 					<button className="menu-toggle" id="menuToggle">
