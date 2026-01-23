@@ -32,6 +32,27 @@ export default function Homepage() {
 		gcTime: 0,
 	});
 
+	useQuery({
+		queryKey: ["me"],
+		queryFn: async () => {
+			const request = await fetch(`/api/auth/me`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			const response = await request.json();
+
+			if (!request.ok) {
+				throw new Error(response.error);
+			}
+
+			return response.user;
+		},
+		gcTime: 0,
+	});
+
 	const { data: products, isFetching: productsLoading } = useQuery({
 		queryKey: ["products", search, category],
 		queryFn: async () => {

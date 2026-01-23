@@ -146,7 +146,7 @@ export default function AdminMenu() {
 					<h1 className="page-title">Menu Management</h1>
 				</div>
 				<div className="header-right">
-					<i className="fas fa-bell header-icon"></i>
+					{/* <i className="fas fa-bell header-icon"></i> */}
 					<i className="fas fa-moon header-icon dark-mode-toggle"></i>
 					<img src="/avatar.png" alt="Admin Avatar" className="admin-avatar" />
 				</div>
@@ -181,7 +181,9 @@ export default function AdminMenu() {
 						Array(5)
 							.fill("")
 							.map((d, i) => (
-								<div className="w-[150px] h-[200px] bg-[#d3d3d3] animate-pulse rounded-lg"></div>
+								<div
+									key={i}
+									className="w-[150px] h-[200px] bg-[#d3d3d3] animate-pulse rounded-lg"></div>
 							))}
 					{!categoriesLoading &&
 						categories &&

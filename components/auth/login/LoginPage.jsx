@@ -44,6 +44,17 @@ export default function LoginPage() {
 				router.replace(nextUrl ?? "/");
 			}, 1000);
 		} catch (error) {
+			if (error.message === "ACCOUNT_NOT_VERIFIED") {
+				setErrorMessage(
+					"Your account is inactive! Check your email for otp code"
+				);
+
+				setTimeout(() => {
+					router.replace(`/auth/verify-otp?email=${values.email}`);
+				}, 300);
+
+				return;
+			}
 			setErrorMessage(error.message);
 			console.log(error);
 		}
@@ -58,6 +69,7 @@ export default function LoginPage() {
 					className="logo"
 					width={120}
 					height={100}
+					unoptimized
 				/>
 				<h1>Welcome to Rich Cafe!</h1>
 				<p className="tagline">

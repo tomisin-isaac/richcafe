@@ -19,26 +19,40 @@ export default function CartPage() {
 				</h1>
 			</header>
 			<div className="!w-full bg-white p-8 flex flex-col">
-				{cart?.items.map((it, idx) => {
-					return <CartItem key={idx} item={it} />;
-				})}
+				{cart?.items.length > 0 &&
+					cart?.items.map((it, idx) => {
+						return <CartItem key={idx} item={it} />;
+					})}
+
+				{cart?.items.length === 0 && (
+					<div className="flex flex-col items-center justify-center">
+						<Image src={"/nocart.svg"} unoptimized width={300} height={300} />
+						<span className="text-2xl font-semibold">
+							No Items in your cart!
+						</span>
+					</div>
+				)}
 			</div>
-			<div className="!w-full bg-white p-8 flex flex-col gap-5 mt-5">
-				<div className="flex items-center justify-between">
-					<span className="text-xl">Subtotal</span>
-					<span className="text-2xl font-medium">
-						₦{cart.pricing.subtotal.toLocaleString()}
-					</span>
-				</div>
-			</div>
-			<div className="!w-full bg-white p-8 flex flex-col gap-5 mt-5">
-				<Link
-					href={"/cart/checkout"}
-					className="submit-button flex items-center justify-center !bg-green-600 !h-[50px] rounded-lg !text-white"
-					id="categoryModalSubmitButton">
-					Proceed to checkout
-				</Link>
-			</div>
+			{cart?.items.length > 0 && (
+				<>
+					<div className="!w-full bg-white p-8 flex flex-col gap-5 mt-5">
+						<div className="flex items-center justify-between">
+							<span className="text-xl">Subtotal</span>
+							<span className="text-2xl font-medium">
+								₦{cart.pricing.subtotal.toLocaleString()}
+							</span>
+						</div>
+					</div>
+					<div className="!w-full bg-white p-8 flex flex-col gap-5 mt-5">
+						<Link
+							href={"/cart/checkout"}
+							className="submit-button flex items-center justify-center !bg-green-600 !h-[50px] rounded-lg !text-white"
+							id="categoryModalSubmitButton">
+							Proceed to checkout
+						</Link>
+					</div>
+				</>
+			)}
 		</div>
 	);
 }

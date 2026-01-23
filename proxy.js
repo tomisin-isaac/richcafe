@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
-const USER_AUTH_PAGES = new Set(["/auth/login", "/auth/signup"]);
+const USER_AUTH_PAGES = new Set([
+	"/auth/login",
+	"/auth/signup",
+	"/auth/verify-otp",
+]);
 const ADMIN_AUTH_PAGES = new Set(["/auth/admin/login", "/auth/admin/signup"]);
 
 function isAdminPath(pathname) {
@@ -22,6 +26,10 @@ async function checkAuth(request, endpointPath) {
 
 export async function proxy(request) {
 	const { pathname, search } = request.nextUrl;
+
+	if (pathname.includes(".")) {
+		return NextResponse.next();
+	}
 
 	// -------- Admin flow --------
 	if (isAdminPath(pathname) || ADMIN_AUTH_PAGES.has(pathname)) {
@@ -70,7 +78,5 @@ export async function proxy(request) {
 
 // Apply to everything EXCEPT: api routes, next internals, and common metadata files
 export const config = {
-	matcher: [
-		"/((?!api|_next/static|_next/image|_next/data|favicon.ico|sitemap.xml|robots.txt).*)",
-	],
+	matcher: ["/((?!api|_next|favicon.ico|sitemap.xml|robots.txt|.*\\..*).*)"],
 };

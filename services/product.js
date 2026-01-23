@@ -123,7 +123,8 @@ export async function listProductsService({ category, available, q } = {}) {
 
 	return Product.find(filter)
 		.sort({ createdAt: -1 })
-		.populate("category", "name image");
+		.populate("category", "name image")
+		.populate("addonGroups.items.product", "name images sizes isAvailable");
 }
 
 export async function getProductByIdService(productId) {

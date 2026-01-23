@@ -31,6 +31,7 @@ export function publicUser(userDoc) {
 		name: userDoc.name ?? "",
 		email: userDoc.email,
 		phone: userDoc.phone,
+		profilePicture: userDoc.profilePicture,
 		createdAt: userDoc.createdAt,
 	};
 }

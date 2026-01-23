@@ -5,10 +5,35 @@ import AddLocationModal from "./AddLocationModal";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import DeleteLocation from "./DeleteLocation";
+import Spinner from "../../shared/Spinner";
 export default function AdminSettings() {
 	const [addingLocation, setAddingLocation] = useState(false);
 	const [editLocation, setEditLocation] = useState(false);
 	const [deleteLocation, setDeleteLocation] = useState(false);
+	const [successMessage, setSuccessMessage] = useState("");
+	const [errorMessage, setErrorMessage] = useState("");
+	const [submitting, setSubmitting] = useState(false);
+
+	const { data, isFetching, refetch } = useQuery({
+		queryKey: ["settings"],
+		queryFn: async () => {
+			const request = await fetch(`/api/admin/settings`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			const response = await request.json();
+
+			if (!request.ok) {
+				throw new Error(response.error);
+			}
+
+			return response;
+		},
+		gcTime: 0,
+	});
 
 	const { data: locations, isFetching: locationsLoading } = useQuery({
 		queryKey: ["locations"],
@@ -30,6 +55,35 @@ export default function AdminSettings() {
 		},
 		gcTime: 0,
 	});
+
+	const updateHandler = async (data) => {
+		try {
+			setErrorMessage("");
+			setSubmitting(true);
+			const request = await fetch(`/api/admin/settings`, {
+				method: "PATCH",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+
+			const response = await request.json();
+
+			if (!request.ok) {
+				throw new Error(response.error);
+			}
+
+			setSuccessMessage("Settings updated successfuly.");
+			setSubmitting(false);
+
+			refetch();
+		} catch (error) {
+			setErrorMessage(error.message);
+			setSubmitting(false);
+			throw error;
+		}
+	};
 
 	return (
 		<>
@@ -76,15 +130,11 @@ export default function AdminSettings() {
 					<h1 className="page-title">Settings</h1>
 				</div>
 				<div className="header-right">
-					<div className="search-box">
-						<input type="text" placeholder="Search..." />
-						<i className="fas fa-search"></i>
-					</div>
-					<i className="fas fa-bell header-icon"></i>
+					{/* <i className="fas fa-bell header-icon"></i> */}
 					<i className="fas fa-moon header-icon dark-mode-toggle"></i>
 
 					<img
-						src="images/avatar.png"
+						src="/avatar.png"
 						alt="Admin Avatar"
 						className="admin-avatar"
 					/>
@@ -98,11 +148,22 @@ export default function AdminSettings() {
 					</div>
 					<div className="operational-hours-status">
 						<div
-							className="status-indicator"
+							className={`status-indicator ${
+								data?.isOpen ? "!bg-[#28a745]" : "!bg-[#dc3545]"
+							}`}
 							id="operationalStatusIndicator"></div>
-						<span id="operationalStatusText">Open For Business</span>
-						<button className="toggle-button" id="toggleOperationalHours">
-							Toggle Status
+						<span id="operationalStatusText">
+							{data?.isOpen ? "Open" : "Closed"} For Business
+						</span>
+						<button
+							onClick={() => {
+								if (data) {
+									updateHandler({ ...data, isOpen: !data.isOpen });
+								}
+							}}
+							className="toggle-button"
+							id="toggleOperationalHours">
+							{submitting ? <Spinner /> : "Toggle Status"}
 						</button>
 					</div>
 				</div>

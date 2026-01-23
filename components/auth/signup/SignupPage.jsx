@@ -39,7 +39,7 @@ export default function SignupPage() {
 			setSuccessMessage("You have been successfuly signed up.");
 
 			setTimeout(() => {
-				router.replace("/");
+				router.replace(`/auth/verify-otp?email=${values.email}`);
 			}, 1000);
 		} catch (error) {
 			setErrorMessage(error.message);
@@ -56,6 +56,7 @@ export default function SignupPage() {
 					className="logo"
 					width={120}
 					height={100}
+					unoptimized
 				/>
 				<h1>Welcome to Rich Cafe!</h1>
 				<p className="tagline">

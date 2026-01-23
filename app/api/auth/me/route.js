@@ -11,10 +11,7 @@ export async function GET(req) {
 	try {
 		const user = await requireUser(req);
 
-		return NextResponse.json(
-			{ ok: true, user: publicUser(user) },
-			{ status: 200 }
-		);
+		return NextResponse.json({ ok: true, user: user }, { status: 200 });
 	} catch {
 		return NextResponse.json(
 			{ ok: false, error: "UNAUTHORIZED" },

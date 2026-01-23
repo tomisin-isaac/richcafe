@@ -19,6 +19,16 @@ const UserSchema = new mongoose.Schema(
 			index: true,
 		},
 		password: { type: String, required: true }, // store hash here
+		isActive: {
+			type: Boolean,
+			default: false,
+		},
+		otp: {
+			code: { type: String },
+			expiresAt: { type: Date },
+			lastSentAt: { type: Date },
+		},
+		profilePicture: String,
 	},
 	{ timestamps: true }
 );

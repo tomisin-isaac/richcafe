@@ -15,16 +15,12 @@ export async function POST(req) {
 			stripUnknown: true,
 		});
 
-		const { user, token } = await signupService(data);
+		const { message, email } = await signupService(data);
 
-		const res = NextResponse.json({ ok: true, user }, { status: 201 });
-		res.cookies.set("session", token, {
-			httpOnly: true,
-			sameSite: "lax",
-			secure: process.env.NODE_ENV === "production",
-			path: "/",
-			maxAge: 60 * 60 * 24 * 30,
-		});
+		const res = NextResponse.json(
+			{ ok: true, message, email },
+			{ status: 201 }
+		);
 
 		return res;
 	} catch (e) {

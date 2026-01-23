@@ -45,6 +45,7 @@ export default function CheckoutPage() {
 		const x = Number(n);
 		return Number.isFinite(x) ? Math.round(x) : 0;
 	}
+
 	function computeVat(subtotal) {
 		// Optional: set VAT_RATE="0.075" (7.5%). Default 0 if not set.
 		const rate = Number(process.env.VAT_RATE ?? 0.075);
