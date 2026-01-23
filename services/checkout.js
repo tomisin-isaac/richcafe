@@ -140,18 +140,32 @@ export async function checkoutService({ user, locationId, hostelName }) {
 		},
 	};
 
-	const response = await axios({
-		method: "post",
-		url: "https://api.paystack.co/transaction/initialize",
-		headers: {
-			Authorization: `Bearer ${process.env.PayStack_SECRET_KEY}`,
-			"Content-Type": "application/json",
-		},
-		data: params,
-	});
+	const request = await fetch(
+		"https://api.paystack.co/transaction/initialize",
+		{
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${process.env.PayStack_SECRET_KEY}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(params),
+		}
+	);
+
+	if (!request.ok) {
+		const text = await request.text();
+		const err = new Error("PAYSTACK_INIT_FAILED");
+		err.status = 502;
+		err.details = text;
+		throw err;
+	}
+
+	const response = await request.json();
+
+	console.log(response, "llldc");
 
 	// Paystack returns a reference we should store
-	const paystackRef = response?.data?.data?.reference ?? null;
+	const paystackRef = response?.data?.reference ?? null;
 	if (paystackRef) {
 		orderSnapshot.reference = paystackRef;
 		await orderSnapshot.save();
@@ -161,7 +175,7 @@ export async function checkoutService({ user, locationId, hostelName }) {
 		orderId,
 		snapshotId: String(orderSnapshot._id),
 		reference: paystackRef,
-		paystack: response.data, // includes authorization_url/access_code/reference
+		paystack: response, // includes authorization_url/access_code/reference
 	};
 }
 
@@ -193,17 +207,29 @@ export async function verifyCheckoutService({ user, reference }) {
 	}
 
 	// 1) Verify on Paystack
-	const verifyRes = await axios({
-		method: "get",
-		url: `https://api.paystack.co/transaction/verify/${encodeURIComponent(
+	const verifyResponse = await fetch(
+		`https://api.paystack.co/transaction/verify/${encodeURIComponent(
 			reference
 		)}`,
-		headers: {
-			Authorization: `Bearer ${process.env.PayStack_SECRET_KEY}`,
-		},
-	});
+		{
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${process.env.PayStack_SECRET_KEY}`,
+			},
+		}
+	);
 
-	const paystackData = verifyRes?.data?.data;
+	if (!verifyResponse.ok) {
+		const text = await verifyResponse.text();
+		const err = new Error("PAYSTACK_VERIFY_FAILED");
+		err.status = 502;
+		err.details = text;
+		throw err;
+	}
+
+	const verifyRes = await verifyResponse.json();
+
+	const paystackData = verifyRes?.data;
 
 	// Paystack API call success check
 	if (!verifyRes?.data?.status || !paystackData) {
