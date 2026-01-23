@@ -1,9 +1,9 @@
+export const runtime = "nodejs";
+
 import { NextResponse } from "next/server";
 import * as yup from "yup";
 import { requireUser } from "../../../../services/auth";
 import { checkoutService } from "../../../../services/checkout";
-
-export const runtime = "nodejs";
 
 const schema = yup
 	.object({
