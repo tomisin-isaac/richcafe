@@ -3,7 +3,6 @@ import Cart from "../models/Cart";
 import Location from "../models/Location";
 import OrderSnapshot from "../models/OrderSnapshot";
 import Order from "../models/Order";
-import axios from "axios";
 import ShortUniqueId from "short-unique-id";
 
 function getHourInLagos(date = new Date()) {
