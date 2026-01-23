@@ -57,7 +57,7 @@ export default function Homepage() {
 		queryKey: ["products", search, category],
 		queryFn: async () => {
 			const request = await fetch(
-				`/api/admin/products?q=${search}&category=${category}`,
+				`/api/customer/products?q=${search}&category=${category}`,
 				{
 					method: "GET",
 					headers: {
