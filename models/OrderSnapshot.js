@@ -64,7 +64,15 @@ const OrderSnapshotSchema = new mongoose.Schema(
 );
 
 OrderSnapshotSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-OrderSnapshotSchema.index({ reference: 1 }, { unique: true, sparse: true });
+OrderSnapshotSchema.index(
+	{ reference: 1 },
+	{
+		unique: true,
+		partialFilterExpression: {
+			reference: { $exists: true, $ne: null },
+		},
+	}
+);
 OrderSnapshotSchema.index({ user: 1, createdAt: -1 });
 
 export default mongoose.models.OrderSnapshot ||
