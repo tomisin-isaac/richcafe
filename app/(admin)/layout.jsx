@@ -3,6 +3,7 @@ import "../global.css";
 import Sidebar from "../../components/shared/admin/Sidebar";
 import { Suspense } from "react";
 import RootProvider from "../../components/shared/providers/RootProvider";
+import NextTopLoader from "nextjs-toploader";
 
 const montserrat = Montserrat({
 	subsets: ["latin"],
@@ -31,6 +32,10 @@ export default function RootLayout({ children }) {
 			/>
 			<RootProvider>
 				<body className={`${montserrat.variable} font-mont`}>
+					<NextTopLoader
+						color="#28a745"
+						shadow="0 0 10px #28a745,0 0 5px #28a745"
+					/>
 					<div className="admin-dashboard-layout">
 						<Suspense>
 							<Sidebar />

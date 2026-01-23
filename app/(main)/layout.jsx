@@ -4,6 +4,7 @@ import Link from "next/link";
 import "../global.css";
 import BottomNav from "../../components/shared/BottomNav";
 import Toast from "../../components/shared/Toast";
+import NextTopLoader from "nextjs-toploader";
 
 const montserrat = Montserrat({
 	subsets: ["latin"],
@@ -32,6 +33,10 @@ export default function RootLayout({ children }) {
 			/>
 			<RootProvider>
 				<body className={`${montserrat.variable} font-mont`}>
+					<NextTopLoader
+						color="#28a745"
+						shadow="0 0 10px #28a745,0 0 5px #28a745"
+					/>
 					<Toast />
 					{children}
 					<BottomNav />
