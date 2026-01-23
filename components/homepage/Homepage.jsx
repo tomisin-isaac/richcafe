@@ -104,53 +104,58 @@ export default function Homepage() {
 					</button>
 				</div>
 			</section>
-			<section className="user-dashboard-categories !w-full !overflow-auto">
-				<div className="user-dashboard-category-item flex flex-col items-center shrink-0">
-					<Image
-						src={"/all.jpg"}
-						width={60}
-						height={60}
-						alt=""
-						onClick={() => {
-							setCategory("");
-						}}
-						unoptimized
-						className={`${
-							category === "" ? "!border-[#28a745] border-[3px]" : ""
-						} w-[60px] h-[60px] rounded-full object-cover cursor-pointer`}
-					/>
-					<p className="text-xl shrink-0">All Categories</p>
-				</div>
-				{categoriesLoading &&
-					Array(5)
+			{categoriesLoading && (
+				<section className="user-dashboard-categories !w-full !overflow-auto">
+					{Array(5)
 						.fill("")
 						.map((d, i) => (
 							<div
 								key={i}
-								className="w-[60px] h-[60px] bg-[#d3d3d3] animate-pulse rounded-full"></div>
+								className="shrink-0 w-[60px] h-[60px] bg-[#d3d3d3] animate-pulse rounded-full"></div>
 						))}
-				{!categoriesLoading &&
-					categories &&
-					categories.map((c) => (
-						<div
-							key={c._id}
-							className={`user-dashboard-category-item flex flex-col items-center shrink-0 `}>
-							<Image
-								src={c.image}
-								width={60}
-								height={60}
-								alt=""
-								onClick={() => {
-									setCategory(c._id);
-								}}
-								className={`w-[60px] h-[60px] rounded-full object-cover cursor-pointer ${
-									category === c._id ? "!border-[#28a745] border-[3px]" : ""
-								}`}
-							/>
-							<p className="text-xl">{c.name}</p>
-						</div>
-					))}
-			</section>
+				</section>
+			)}
+			{!categoriesLoading && categories && (
+				<section className="user-dashboard-categories !w-full !overflow-auto">
+					<div className="user-dashboard-category-item flex flex-col items-center shrink-0">
+						<Image
+							src={"/all.jpg"}
+							width={60}
+							height={60}
+							alt=""
+							onClick={() => {
+								setCategory("");
+							}}
+							unoptimized
+							className={`${
+								category === "" ? "!border-[#28a745] border-[3px]" : ""
+							} w-[60px] h-[60px] rounded-full object-cover cursor-pointer`}
+						/>
+						<p className="text-xl shrink-0">All Categories</p>
+					</div>
+					{!categoriesLoading &&
+						categories &&
+						categories.map((c) => (
+							<div
+								key={c._id}
+								className={`user-dashboard-category-item flex flex-col items-center shrink-0 `}>
+								<Image
+									src={c.image}
+									width={60}
+									height={60}
+									alt=""
+									onClick={() => {
+										setCategory(c._id);
+									}}
+									className={`w-[60px] h-[60px] rounded-full object-cover cursor-pointer ${
+										category === c._id ? "!border-[#28a745] border-[3px]" : ""
+									}`}
+								/>
+								<p className="text-xl">{c.name}</p>
+							</div>
+						))}
+				</section>
+			)}
 			<section className="user-dashboard-available !py-0">
 				<h2>Available Food</h2>
 				<div className="user-dashboard-food-grid">
@@ -160,7 +165,7 @@ export default function Homepage() {
 							.map((d, i) => (
 								<div
 									key={i}
-									className="h-[200px] bg-[#d3d3d3] animate-pulse rounded-lg"></div>
+									className="w-full h-[200px] bg-[#d3d3d3] animate-pulse rounded-lg"></div>
 							))}
 					{!productsLoading &&
 						products &&
