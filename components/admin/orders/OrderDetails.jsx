@@ -123,6 +123,19 @@ export default function OrderDetails({ close, item }) {
 					))}
 				</div>
 
+				{item.deliveryMethod && (
+					<div className="!w-full bg-white px-8 flex flex-col gap-2 mt-5">
+						<div className="flex flex-col gap-1">
+							<h2 className="!text-left !text-xl !m-0 !p-0">Delivery Method</h2>
+						</div>
+						<div className="p-5 rounded-lg !outline-none text-2xl bg-[#eaeaea] flex items-center">
+							<span className="px-3 w-max py-1 rounded-full flex items-center justify-center bg-blue-200 !text-blue-500">
+								{item.deliveryMethod}
+							</span>
+						</div>
+					</div>
+				)}
+
 				<div className="!w-full bg-white px-8 flex flex-col gap-2">
 					<div className="flex flex-col gap-1">
 						<h2 className="!text-left !text-xl !m-0 !p-0">Location</h2>
@@ -140,6 +153,19 @@ export default function OrderDetails({ close, item }) {
 						<span>{item.hostelName}</span>
 					</div>
 				</div>
+
+				{item.deliveryInstructions && (
+					<div className="!w-full bg-white px-8 flex flex-col gap-2 mt-5">
+						<div className="flex flex-col gap-1">
+							<h2 className="!text-left !text-xl !m-0 !p-0">
+								Delivery Instruction
+							</h2>
+						</div>
+						<div className="p-5 rounded-lg !outline-none text-2xl bg-[#eaeaea] flex items-center">
+							<span>{item.deliveryInstructions}</span>
+						</div>
+					</div>
+				)}
 
 				<div className="!w-full bg-white p-8 flex flex-col gap-5">
 					<div className="flex items-center justify-between">

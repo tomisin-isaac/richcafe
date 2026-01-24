@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
 				href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
 			/>
 			<RootProvider>
-				<body className={`${montserrat.variable} font-mont`}>
+				<body className={`${montserrat.variable} font-mont antialiased`}>
 					<NextTopLoader
 						color="#28a745"
 						shadow="0 0 10px #28a745,0 0 5px #28a745"

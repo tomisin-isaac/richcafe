@@ -9,6 +9,8 @@ const schema = yup
 	.object({
 		locationId: yup.string().trim().required(),
 		hostelName: yup.string().trim().required(),
+		deliveryMethod: yup.string().trim().required(),
+		deliveryInstructions: yup.string().trim().required(),
 	})
 	.noUnknown(true);
 
@@ -34,6 +36,8 @@ export async function POST(req) {
 			user,
 			locationId: data.locationId,
 			hostelName: data.hostelName,
+			deliveryMethod: data.deliveryMethod,
+			deliveryInstructions: data.deliveryInstructions,
 		});
 
 		return NextResponse.json({ ok: true, ...result }, { status: 200 });

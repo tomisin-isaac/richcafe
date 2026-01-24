@@ -30,24 +30,6 @@ export default function CustomersPage() {
 
 	return (
 		<>
-			<header class="dashboard-header">
-				<div class="header-left">
-					<button class="menu-toggle" id="menuToggle">
-						<i class="fas fa-bars"></i>
-					</button>
-					<h1 class="page-title">Customer List</h1>
-				</div>
-				<div class="header-right">
-					{/* <div class="search-box">
-						<input type="text" placeholder="Search..." />
-						<i class="fas fa-search"></i>
-					</div> */}
-					{/* <i class="fas fa-bell header-icon"></i> */}
-					<i class="fas fa-moon header-icon dark-mode-toggle"></i>
-					<img src="/avatar.png" alt="Admin Avatar" class="admin-avatar" />
-				</div>
-			</header>
-
 			<section class="customers-management-content">
 				<div class="section-header">
 					<h2 class="section-title">Customers</h2>

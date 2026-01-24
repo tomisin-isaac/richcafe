@@ -12,6 +12,8 @@ export default function CheckoutPage() {
 	const { cart } = useRootStore();
 	const [selectedLocation, setSelectedLocation] = useState(null);
 	const [hostelName, setHostelName] = useState("");
+	const [deliveryMethod, setDeliveryMethod] = useState("home");
+	const [instructions, setInstructions] = useState("");
 	const { showAndHideAlert } = useAlert();
 	const [submitting, setSubmitting] = useState(false);
 	const router = useRouter();
@@ -72,16 +74,20 @@ export default function CheckoutPage() {
 	const subtotal = cart?.pricing.subtotal;
 	const vat = computeVat(cart?.pricing.subtotal);
 	const hour = getHourInLagos(new Date());
-	const deliveryFee = isNightFeeHour(hour)
-		? moneyInt(selectedLocation?.nightDeliveryFee)
-		: moneyInt(selectedLocation?.dayDeliveryFee);
+	let deliveryFee = 0;
+
+	if (deliveryMethod === "home") {
+		deliveryFee = isNightFeeHour(hour)
+			? moneyInt(selectedLocation?.nightDeliveryFee)
+			: moneyInt(selectedLocation?.dayDeliveryFee);
+	}
 
 	const total = subtotal + vat + deliveryFee;
 
 	const checkoutHandler = async () => {
 		try {
 			setSubmitting(true);
-			if (!selectedLocation) {
+			if (deliveryMethod === "home" && !selectedLocation) {
 				throw new Error("Please select a location");
 			}
 
@@ -97,6 +103,8 @@ export default function CheckoutPage() {
 				body: JSON.stringify({
 					locationId: selectedLocation._id,
 					hostelName: hostelName,
+					deliveryMethod,
+					deliveryInstructions: instructions,
 				}),
 			});
 
@@ -140,42 +148,83 @@ export default function CheckoutPage() {
 			</div>
 			<div className="!w-full bg-white p-8 flex flex-col gap-5 mt-5">
 				<div className="flex flex-col gap-1 pb-3 border-b border-b-[#eaeaea]">
-					<h2 className="!m-0 !p-0">Select Location</h2>
+					<h2 className="!m-0 !p-0">Delivery Method</h2>
 					<span className="text-xl text-[#787878]">
-						Choose where you want your order delivered. Select a location below,
-						then enter your hostel name.
+						Choose how you want your order delivered.
 					</span>
 				</div>
-				{locations &&
-					locations.map((loc, idx) => {
-						const isSelected = selectedLocation?._id === loc._id;
-						return (
-							<div
-								key={idx}
-								className="flex items-center justify-between mb-3 last:mb-0">
-								<div className="flex items-center gap-3">
-									<span className="text-2xl">{loc.name}</span>
-								</div>
-								<button
-									onClick={() => {
-										if (!isSelected) {
-											setSelectedLocation(loc);
-										} else {
-											setSelectedLocation(null);
-										}
-									}}
-									type="button"
-									className={`rounded-lg !w-max !h-max !py-[5px] !px-[10px] submit-button !text-xl ${
-										isSelected
-											? "!bg-[#eaeaea] !text-[#787878]"
-											: "!bg-blue-950 !text-white"
-									}`}>
-									{!isSelected ? <span>Select</span> : <span>Remove</span>}
-								</button>
+				{[
+					{ title: "Home Delivery", key: "home" },
+					{ title: "Pickup", key: "pickup" },
+				].map((loc, idx) => {
+					const isSelected = deliveryMethod === loc.key;
+					return (
+						<div
+							key={idx}
+							className="flex items-center justify-between mb-3 last:mb-0">
+							<div className="flex items-center gap-3">
+								<span className="text-2xl">{loc.title}</span>
 							</div>
-						);
-					})}
+							<button
+								onClick={() => {
+									if (!isSelected) {
+										setDeliveryMethod(loc.key);
+									} else {
+										setDeliveryMethod(null);
+									}
+								}}
+								type="button"
+								className={`rounded-lg !w-max !h-max !py-[5px] !px-[10px] submit-button !text-xl ${
+									isSelected
+										? "!bg-[#eaeaea] !text-[#787878]"
+										: "!bg-blue-950 !text-white"
+								}`}>
+								{!isSelected ? <span>Select</span> : <span>Remove</span>}
+							</button>
+						</div>
+					);
+				})}
 			</div>
+			{deliveryMethod === "home" && (
+				<div className="!w-full bg-white p-8 flex flex-col gap-5 mt-5">
+					<div className="flex flex-col gap-1 pb-3 border-b border-b-[#eaeaea]">
+						<h2 className="!m-0 !p-0">Select Location</h2>
+						<span className="text-xl text-[#787878]">
+							Choose where you want your order delivered. Select a location
+							below, then enter your hostel name.
+						</span>
+					</div>
+					{locations &&
+						locations.map((loc, idx) => {
+							const isSelected = selectedLocation?._id === loc._id;
+							return (
+								<div
+									key={idx}
+									className="flex items-center justify-between mb-3 last:mb-0">
+									<div className="flex items-center gap-3">
+										<span className="text-2xl">{loc.name}</span>
+									</div>
+									<button
+										onClick={() => {
+											if (!isSelected) {
+												setSelectedLocation(loc);
+											} else {
+												setSelectedLocation(null);
+											}
+										}}
+										type="button"
+										className={`rounded-lg !w-max !h-max !py-[5px] !px-[10px] submit-button !text-xl ${
+											isSelected
+												? "!bg-[#eaeaea] !text-[#787878]"
+												: "!bg-blue-950 !text-white"
+										}`}>
+										{!isSelected ? <span>Select</span> : <span>Remove</span>}
+									</button>
+								</div>
+							);
+						})}
+				</div>
+			)}
 			<div className="!w-full bg-white p-8 flex flex-col gap-2 mt-5">
 				<div className="flex flex-col gap-1">
 					<h2 className="!m-0 !p-0">Hostel Name</h2>
@@ -192,6 +241,21 @@ export default function CheckoutPage() {
 					type="text"
 					id={`hostel-number`}
 					placeholder="Hostel Name"
+				/>
+			</div>
+			<div className="!w-full bg-white p-8 flex flex-col gap-2 mt-5">
+				<div className="flex flex-col gap-1">
+					<h2 className="!m-0 !p-0">Delivery Instructions</h2>
+				</div>
+				<textarea
+					value={instructions}
+					onChange={(e) => {
+						setInstructions(e.target.value);
+					}}
+					className="border-b border-b-[#d3d3d3] h-[95px] !outline-none text-2xl !resize-none"
+					type="text"
+					id={`hostel-number`}
+					placeholder="E.g Calling Number, Gatepass code... etc"
 				/>
 			</div>
 			<div className="!w-full bg-white p-8 flex flex-col gap-5 mt-5">

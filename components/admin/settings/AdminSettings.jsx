@@ -122,24 +122,6 @@ export default function AdminSettings() {
 					</motion.div>
 				)}
 			</AnimatePresence>
-			<header className="dashboard-header">
-				<div className="header-left">
-					<button className="menu-toggle" id="menuToggle">
-						<i className="fas fa-bars"></i>
-					</button>
-					<h1 className="page-title">Settings</h1>
-				</div>
-				<div className="header-right">
-					{/* <i className="fas fa-bell header-icon"></i> */}
-					<i className="fas fa-moon header-icon dark-mode-toggle"></i>
-
-					<img
-						src="/avatar.png"
-						alt="Admin Avatar"
-						className="admin-avatar"
-					/>
-				</div>
-			</header>
 
 			<section className="settings-content">
 				<div className="card settings-card">

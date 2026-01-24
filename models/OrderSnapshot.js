@@ -43,6 +43,20 @@ const OrderSnapshotSchema = new mongoose.Schema(
 		location: { type: String, required: true, trim: true }, // snapshot
 		hostelName: { type: String, required: true, trim: true },
 
+		deliveryMethod: {
+			type: String,
+			enum: ["home", "pickup"],
+			required: true,
+			index: true,
+		},
+
+		deliveryInstructions: {
+			type: String,
+			default: "",
+			trim: true,
+			maxlength: 500,
+		},
+
 		items: { type: [OrderSnapshotItemSchema], required: true },
 
 		pricing: {

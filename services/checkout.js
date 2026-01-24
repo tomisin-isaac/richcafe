@@ -59,8 +59,20 @@ async function generateUniqueOrderId() {
 	throw err;
 }
 
-export async function checkoutService({ user, locationId, hostelName }) {
+export async function checkoutService({
+	user,
+	locationId,
+	hostelName,
+	deliveryMethod,
+	deliveryInstructions = "",
+}) {
 	await dbConnect();
+
+	if (!["home", "pickup"].includes(deliveryMethod)) {
+		const err = new Error("INVALID_DELIVERY_METHOD");
+		err.status = 400;
+		throw err;
+	}
 
 	const cart = await Cart.findOne({ user: user.id });
 	if (!cart || cart.items.length === 0) {
@@ -76,13 +88,17 @@ export async function checkoutService({ user, locationId, hostelName }) {
 		throw err;
 	}
 
-	// delivery fee based on Lagos time
-	const hour = getHourInLagos(new Date());
-	const deliveryFee = isNightFeeHour(hour)
-		? moneyInt(location.nightDeliveryFee)
-		: moneyInt(location.dayDeliveryFee);
+	// delivery fee
+	let deliveryFee = 0;
 
-	// subtotal from cart (recompute defensively)
+	if (deliveryMethod === "home") {
+		const hour = getHourInLagos(new Date());
+		deliveryFee = isNightFeeHour(hour)
+			? moneyInt(location.nightDeliveryFee)
+			: moneyInt(location.dayDeliveryFee);
+	}
+
+	// subtotal (defensive recompute)
 	const subtotal = moneyInt(
 		(cart.items || []).reduce(
 			(sum, it) => sum + moneyInt(it.unitPrice) * moneyInt(it.quantity),
@@ -95,13 +111,18 @@ export async function checkoutService({ user, locationId, hostelName }) {
 
 	const orderId = await generateUniqueOrderId();
 
-	// Create snapshot FIRST (so we can include snapshot_id in metadata)
+	// 🧾 Create snapshot FIRST
 	const orderSnapshot = await OrderSnapshot.create({
 		orderId,
 		user: user.id,
+
 		locationId: location._id,
-		location: location.name, // snapshot
+		location: location.name,
 		hostelName: hostelName.trim(),
+
+		// ✅ NEW
+		deliveryMethod,
+		deliveryInstructions: deliveryInstructions.trim(),
 
 		items: cart.items.map((it) => ({
 			product: it.product,
@@ -120,16 +141,16 @@ export async function checkoutService({ user, locationId, hostelName }) {
 			vat,
 			total,
 		},
+
 		reference: null,
-		// expiresAt handled by model default
 	});
 
 	const params = {
 		email: user.email,
-		amount: toKobo(total), // already in kobo (smallest unit)
-		callback_url: `${process.env.orderSuccessURL}`,
+		amount: toKobo(total),
+		callback_url: process.env.orderSuccessURL,
 		metadata: {
-			cancel_action: `${process.env.orderCancelURL}`,
+			cancel_action: process.env.orderCancelURL,
 			cart_id: JSON.stringify({
 				order_id: orderId,
 				snapshot_id: String(orderSnapshot._id),
@@ -161,9 +182,6 @@ export async function checkoutService({ user, locationId, hostelName }) {
 
 	const response = await request.json();
 
-	//console.log(response, "llldc");
-
-	// Paystack returns a reference we should store
 	const paystackRef = response?.data?.reference ?? null;
 	if (paystackRef) {
 		orderSnapshot.reference = paystackRef;
@@ -174,7 +192,7 @@ export async function checkoutService({ user, locationId, hostelName }) {
 		orderId,
 		snapshotId: String(orderSnapshot._id),
 		reference: paystackRef,
-		paystack: response, // includes authorization_url/access_code/reference
+		paystack: response,
 	};
 }
 
@@ -292,6 +310,8 @@ export async function verifyCheckoutService({ user, reference }) {
 				hostelName: snapshot.hostelName,
 				items: snapshot.items,
 				pricing: snapshot.pricing,
+				deliveryMethod: snapshot.deliveryMethod,
+				deliveryInstructions: snapshot.deliveryInstructions,
 				reference,
 				status: "pending",
 			},
@@ -386,6 +406,8 @@ export async function handlePaystackWebhookService({ event, data }) {
 				hostelName: snapshot.hostelName,
 				items: snapshot.items,
 				pricing: snapshot.pricing,
+				deliveryMethod: snapshot.deliveryMethod,
+				deliveryInstructions: snapshot.deliveryInstructions,
 				reference,
 				status: "pending",
 			},
