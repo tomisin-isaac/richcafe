@@ -124,7 +124,7 @@ export default function OrderDetails({ close, item }) {
 				</div>
 
 				{item.deliveryMethod && (
-					<div className="!w-full bg-white px-8 flex flex-col gap-2 mt-5">
+					<div className="!w-full bg-white px-8 flex flex-col gap-2 mb-5">
 						<div className="flex flex-col gap-1">
 							<h2 className="!text-left !text-xl !m-0 !p-0">Delivery Method</h2>
 						</div>
