@@ -64,14 +64,14 @@ export default function LoginPage() {
 		<div className="container welcome-container">
 			<div className="welcome-header flex flex-col items-center">
 				<Image
-					src="/logo.png"
-					alt="Rich Cafe Logo"
+					src="/pxp-logo.png"
+					alt="PXP Logo"
 					className="logo"
 					width={120}
 					height={100}
 					unoptimized
 				/>
-				<h1>Welcome to Rich Cafe!</h1>
+				<h1>Welcome to PXP!</h1>
 				<p className="tagline">
 					Order delicious meals, get exclusive offers, and enjoy fast delivery.
 				</p>

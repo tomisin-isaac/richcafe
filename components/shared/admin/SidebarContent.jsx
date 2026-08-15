@@ -11,7 +11,7 @@ export default function SidebarContent() {
 		<>
 			<div className="flex flex-col items-center justify-center">
 				<Image
-					src="/logo.png"
+					src="/pxp-logo.png"
 					alt="Rich Cafe Logo"
 					className="logo"
 					width={80}

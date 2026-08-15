@@ -2845,7 +2845,7 @@ body.dark-mode .menu-items-table .delete-btn:hover {
 
 .user-dashboard-food-grid {
 	display: grid;
-	grid-template-columns: 1fr;
+	grid-template-columns: 1fr 1fr;
 	gap: 2rem;
 }
 
