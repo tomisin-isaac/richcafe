@@ -101,7 +101,7 @@ export default function CheckoutPage() {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					locationId: selectedLocation._id,
+					locationId: selectedLocation?._id,
 					hostelName: hostelName,
 					deliveryMethod,
 					deliveryInstructions: instructions,

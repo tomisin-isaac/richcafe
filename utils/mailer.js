@@ -1,5 +1,7 @@
 // lib/mailer.js
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const mailer = nodemailer.createTransport({
 	host: "smtp.gmail.com",
@@ -12,9 +14,9 @@ export const mailer = nodemailer.createTransport({
 });
 
 export async function sendOtpEmail({ to, code }) {
-	return mailer.sendMail({
+	const { data, error } = await resend.emails.send({
 		from: `${process.env.COMPANY_NAME} <${process.env.MAIL_USER}>`,
-		to,
+		to: [to],
 		subject: "Verify your account",
 		html: `
 			<p>Your verification code is:</p>
@@ -22,4 +24,9 @@ export async function sendOtpEmail({ to, code }) {
 			<p>This code expires in 10 minutes.</p>
 		`,
 	});
+
+	if (error) {
+		console.log(error);
+		throw Error("error sending email");
+	}
 }

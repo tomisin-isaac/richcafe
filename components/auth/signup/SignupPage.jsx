@@ -51,7 +51,7 @@ export default function SignupPage() {
 		<div className="container welcome-container">
 			<div className="welcome-header flex flex-col items-center">
 				<Image
-					src="/logo.png"
+					src="/pxp-logo.png"
 					alt="Rich Cafe Logo"
 					className="logo"
 					width={120}
