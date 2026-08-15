@@ -171,30 +171,52 @@ export default function Homepage() {
 						products &&
 						products.map((product, i) => (
 							<Link
-								onClick={() => {
-									setState({ currentProduct: product });
-								}}
+								onClick={() => setState({ currentProduct: product })}
 								href={`/product-details?p=${product._id}`}
 								key={i}
-								className="user-dashboard-food-card-content">
-								<div className="user-dashboard-food-img">
+								className="group relative block rounded-2xl bg-white border border-stone-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+								<div className="relative h-40 overflow-hidden">
 									<Image
 										src={product.images[0]}
-										className="h-full w-full object-cover"
+										className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
 										width={400}
 										height={200}
-										alt="jsjs"
+										alt={product.name}
 										unoptimized
 									/>
 								</div>
-								<div className="user-dashboard-food-info">
-									<div className="user-dashboard-food-details">
-										<h3>{product.name}</h3>
-										<span className="user-dashboard-food-price">
-											from ₦{product.sizes[0].price.toLocaleString()}
+
+								<div className="relative px-4 pt-6 pb-4">
+									{/* time chip, straddling the image/content seam like a ticket stub */}
+									<div className="absolute -top-4 left-4 flex items-center gap-1 bg-white border border-stone-200 shadow-sm rounded-full px-2.5 py-1">
+										{/* <Clock
+											className="h-3 w-3 text-indigo-800"
+											strokeWidth={2.5}
+										/> */}
+										<span className="text-xs font-semibold text-indigo-950">
+											{product.preparationTimeMinutes} min
 										</span>
 									</div>
-									<p>Preparation Time | {product.preparationTimeMinutes} min</p>
+
+									<h3 className="font-semibold text-stone-900 leading-snug line-clamp-2 h-11">
+										{product.name}
+									</h3>
+
+									<div className="mt-3 flex items-end justify-between">
+										<div>
+											<div className="text-xs uppercase tracking-wide text-stone-400 font-medium">
+												From
+											</div>
+											<div className="text-lg font-bold text-amber-700">
+												{product.sizes?.[0]?.price != null
+													? `₦${product.sizes[0].price.toLocaleString()}`
+													: "Price unavailable"}
+											</div>
+										</div>
+										<div className="flex items-center gap-1 text-xs font-medium text-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity">
+											View {/* View <ArrowUpRight className="h-3.5 w-3.5" /> */}
+										</div>
+									</div>
 								</div>
 							</Link>
 						))}
