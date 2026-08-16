@@ -7,10 +7,10 @@ import { checkoutService } from "../../../../services/checkout";
 
 const schema = yup
 	.object({
-		locationId: yup.string().trim().required(),
-		hostelName: yup.string().trim().required(),
+		locationId: yup.string().trim().optional(),
+		hostelName: yup.string().trim().optional(),
 		deliveryMethod: yup.string().trim().required(),
-		deliveryInstructions: yup.string().trim().required(),
+		deliveryInstructions: yup.string().trim().optional(),
 	})
 	.noUnknown(true);
 

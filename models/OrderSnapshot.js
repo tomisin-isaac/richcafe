@@ -37,11 +37,10 @@ const OrderSnapshotSchema = new mongoose.Schema(
 		locationId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Location",
-			required: true,
 			index: true,
 		},
-		location: { type: String, required: true, trim: true }, // snapshot
-		hostelName: { type: String, required: true, trim: true },
+		location: { type: String,  trim: true }, // snapshot
+		hostelName: { type: String,  trim: true },
 
 		deliveryMethod: {
 			type: String,

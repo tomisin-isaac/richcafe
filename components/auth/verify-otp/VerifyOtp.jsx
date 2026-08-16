@@ -44,7 +44,7 @@ export default function VerifyOtp() {
 	return (
 		<div className="container verify-code-container">
 			<div className="verify-code-header !flex items-center !flex-col">
-				<img src="/logo.png" alt="Rich Cafe Logo" className="logo" />
+				<img src="/pxp-logo.png" alt="Rich Cafe Logo" className="logo" />
 				<h1>Verify Your Email</h1>
 				<p className="tagline">
 					Please enter the 6-digit code sent to{" "}

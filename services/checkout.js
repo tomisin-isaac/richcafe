@@ -81,17 +81,18 @@ export async function checkoutService({
 		throw err;
 	}
 
-	const location = await Location.findById(locationId);
-	if (!location || !location.isActive) {
-		const err = new Error("LOCATION_NOT_FOUND");
-		err.status = 404;
-		throw err;
-	}
-
 	// delivery fee
 	let deliveryFee = 0;
+	let location = null;
 
 	if (deliveryMethod === "home") {
+		location = await Location.findById(locationId);
+		if (!location || !location.isActive) {
+			const err = new Error("LOCATION_NOT_FOUND");
+			err.status = 404;
+			throw err;
+		}
+
 		const hour = getHourInLagos(new Date());
 		deliveryFee = isNightFeeHour(hour)
 			? moneyInt(location.nightDeliveryFee)
@@ -116,8 +117,8 @@ export async function checkoutService({
 		orderId,
 		user: user.id,
 
-		locationId: location._id,
-		location: location.name,
+		locationId: location?._id,
+		location: location?.name,
 		hostelName: hostelName.trim(),
 
 		// ✅ NEW
