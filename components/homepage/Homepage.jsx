@@ -205,7 +205,7 @@ export default function Homepage() {
 									<div className="mt-3 flex items-end justify-between">
 										<div>
 											<div className="text-xs uppercase tracking-wide text-stone-400 font-medium">
-												From
+												Price
 											</div>
 											<div className="text-lg font-bold text-amber-700">
 												{product.sizes?.[0]?.price != null
