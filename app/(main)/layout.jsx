@@ -13,7 +13,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata = {
-	title: "Rich Cafe",
+	title: "PXP",
 	description: "Order Our Restaurant food, takeaway and Pizza.",
 };
 
